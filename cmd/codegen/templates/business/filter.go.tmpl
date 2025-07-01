@@ -1,0 +1,7 @@
+package {{.DomainL}}
+
+type QueryFilter struct {
+{{- if .WithSoftDelete}}
+    Deleted *bool
+{{- end}}
+}

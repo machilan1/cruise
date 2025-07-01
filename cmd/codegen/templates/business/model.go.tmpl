@@ -1,0 +1,39 @@
+package {{.DomainL}}
+
+import "time"
+
+type {{.DomainU}} struct {
+    ID        int
+{{- range .CoreFields }}
+{{.}}
+{{- end}}
+{{- if .WithOptConcur}}
+    Etag     int
+{{- end}}
+{{- if .NeedCUTime}}
+    CreatedAt time.Time
+    UpdatedAt time.Time
+{{- end}}
+{{- if .WithSoftDelete}}
+    DeletedAt *time.Time
+{{end}}
+// codegen:{BD}
+}
+{{if not .WithQueryOnly}}
+type New{{.DomainU}} struct {
+{{- range .CoreFields }}
+{{.}}
+{{- end}}
+// codegen:{BN}
+}
+
+type Update{{.DomainU}} struct {
+{{- range .CoreUpdateStructFields }}
+{{.}}
+{{- end}}
+{{- if .WithOptConcur}}
+    Etag   int
+{{- end}}
+// codegen:{BU}
+}
+{{end}}

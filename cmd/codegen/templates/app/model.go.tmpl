@@ -1,0 +1,113 @@
+package {{.DomainL}}api
+
+import (
+    "time"
+
+    "{{.Module}}/internal/business/domain/{{.DomainL}}"
+    "{{.Module}}/internal/framework/validate"
+)
+
+// App{{.DomainU}} represents an individual {{.DomainL}}.
+type App{{.DomainU}} struct {
+    ID        int       `json:"id"`
+    {{- range .JSONFields }}
+    {{.}}
+    {{- end}}
+    {{- if .NeedCUTime}}
+    CreatedAt time.Time `json:"createdAt"`
+    UpdatedAt time.Time `json:"updatedAt"`
+    {{- end}}
+    {{- if .WithOptConcur}}
+    Etag      int       `json:"etag"`
+    {{end}}
+    // codegen:{AD}
+}
+
+func toApp{{.DomainU}}({{.DomainVar}} {{.DomainL}}.{{.DomainU}}) App{{.DomainU}} {
+    return App{{.DomainU}}{
+        ID:        {{.DomainVar}}.ID,
+        {{- range .ToAppStructFields }}
+        {{.}}
+        {{- end}}
+        {{- if .NeedCUTime}}
+        CreatedAt: {{.DomainVar}}.CreatedAt,
+        UpdatedAt: {{.DomainVar}}.UpdatedAt,
+        {{- end}}
+        {{- if .WithOptConcur}}
+        Etag:   {{.DomainVar}}.Etag,
+        {{end}}
+        // codegen:{tAD}
+    }
+}
+
+func toApp{{.DomainPluralU}}({{.DomainVars}} []{{.DomainL}}.{{.DomainU}}) []App{{.DomainU}} {
+    items := make([]App{{.DomainU}}, len({{.DomainVars}}))
+    for i, {{.DomainVar}} := range {{.DomainVars}} {
+        items[i] = toApp{{.DomainU}}({{.DomainVar}})
+    }
+
+    return items
+}
+{{if not .WithQueryOnly}}
+// =============================================================================
+
+type AppNew{{.DomainU}} struct {
+{{- range .JSONFields }}
+{{.}}
+{{- end}}
+// codegen:{AN}
+}
+
+func (app AppNew{{.DomainU}}) Validate() error {
+    if err := validate.Check(app); err != nil {
+        return err
+    }
+
+    return nil
+}
+
+func toCoreNew{{.DomainU}}(app AppNew{{.DomainU}}) ({{.DomainL}}.New{{.DomainU}}, error) {
+    // codegen:{tManyBN}
+    {{.DomainNewVar}} := {{.DomainL}}.New{{.DomainU}}{
+    {{- range .ToCoreNewStructFields }}
+    {{.}}
+    {{- end}}
+    // codegen:{tBN}
+    }
+
+    return {{.DomainNewVar}}, nil
+}
+
+// =============================================================================
+
+type AppUpdate{{.DomainU}} struct {
+    {{- range .AppUpdateStructFields }}
+    {{.}}
+    {{- end}}
+    {{- if .WithOptConcur}}
+    Etag   int       `json:"etag"`
+    {{end}}
+    // codegen:{AU}
+}
+
+func (app AppUpdate{{.DomainU}}) Validate() error {
+    if err := validate.Check(app); err != nil {
+        return err
+    }
+
+    return nil
+}
+
+func toCoreUpdate{{.DomainU}}(app AppUpdate{{.DomainU}}) ({{.DomainL}}.Update{{.DomainU}}, error) {
+    // codegen:{tManyBU}
+    {{.DomainUpdVar}} := {{.DomainL}}.Update{{.DomainU}}{
+    {{- range .ToCoreUpdateStructFields }}
+    {{.}}
+    {{- end}}
+    // codegen:{tBU}
+    }
+
+    return {{.DomainUpdVar}}, nil
+}
+{{end}}
+

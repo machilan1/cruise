@@ -1,0 +1,144 @@
+package {{.DomainL}}db
+
+import (
+{{- if .WithSoftDelete}}
+    "database/sql"
+{{- end}}
+    "fmt"
+    "time"
+
+    "{{.Module}}/internal/business/domain/{{.DomainL}}"
+)
+
+type db{{.OneToManyNewModelName}} struct {
+    ID        int       `db:"{{.DBPrefix}}_id" json:"{{.DBPrefix}}_id"`
+{{- range .DBFields }}
+{{.}}
+{{- end}}
+{{- if .WithOptConcur}}
+    Etag      int       `db:"etag" json:"etag"`
+{{- end}}
+{{- if .NeedCUTime}}
+    CreatedAt time.Time `db:"created_at" json:"created_at"`
+    UpdatedAt time.Time `db:"updated_at" json:"updated_at"`
+{{- end}}
+{{- if .WithSoftDelete}}
+    DeletedAt *time.Time `db:"deleted_at" json:"deleted_at"`
+{{- end}}
+// codegen:{SD}
+}
+{{if not .WithQueryOnly}}
+func toDB{{.OneToManyNewModelName}}({{.DomainVar}} {{.DomainL}}.{{.OneToManyNewModelName}}) db{{.OneToManyNewModelName}} {
+    db{{.DomainVarU}} := db{{.OneToManyNewModelName}}{
+        ID:        {{.DomainVar}}.ID,
+    {{- range .ToDBStructFields }}
+    {{.}}
+    {{- end}}
+    {{- if .WithOptConcur}}
+        Etag:   {{.DomainVar}}.Etag,
+    {{- end}}
+    {{- if .NeedCUTime}}
+        CreatedAt: {{.DomainVar}}.CreatedAt,
+        UpdatedAt: {{.DomainVar}}.UpdatedAt,
+    {{- end}}
+    {{- if .WithSoftDelete}}
+        DeletedAt: {{.DomainVar}}.DeletedAt,
+    {{- end}}
+    // codegen:{tSD}
+    }
+
+    return db{{.DomainVarU}}
+}
+{{end}}
+func toCore{{.OneToManyNewModelName}}(db{{.DomainVarU}} db{{.OneToManyNewModelName}}) ({{.DomainL}}.{{.OneToManyNewModelName}}, error) {
+    {{.DomainVar}} := {{.DomainL}}.{{.OneToManyNewModelName}}{
+        ID:        db{{.DomainVarU}}.ID,
+    {{- range .ToCoreStructFields }}
+        {{.}}
+    {{- end}}
+    {{- if .WithOptConcur}}
+        Etag:      db{{.DomainVarU}}.Etag,
+    {{- end}}
+    {{- if .NeedCUTime}}
+        CreatedAt: db{{.DomainVarU}}.CreatedAt,
+        UpdatedAt: db{{.DomainVarU}}.UpdatedAt,
+    {{- end}}
+    {{- if .WithSoftDelete}}
+        DeletedAt: db{{.DomainVarU}}.DeletedAt,
+    {{- end}}
+    // codegen:{tBD}
+    }
+
+    return {{.DomainVar}}, nil
+}
+
+func toCore{{.OneToManyNewModelPlural}}(db{{.OneToManyNewModelPlural}} []db{{.OneToManyNewModelName}}) ([]{{.DomainL}}.{{.OneToManyNewModelName}}, error) {
+    {{.DomainVars}} := make([]{{.DomainL}}.{{.OneToManyNewModelName}}, len(db{{.OneToManyNewModelPlural}}))
+    for i, db{{.DomainVarU}} := range db{{.OneToManyNewModelPlural}} {
+        {{.DomainVar}}, err := toCore{{.OneToManyNewModelName}}(db{{.DomainVarU}})
+        if err != nil {
+            return nil, fmt.Errorf("parse type: %w", err)
+        }
+        {{.DomainVars}}[i] = {{.DomainVar}}
+    }
+
+    return {{.DomainVars}}, nil
+}
+
+func toDBJSON{{.DomainU}}{{.OneToManyNewModelPlural}}({{.DomainVar}} {{.DomainL}}.{{.DomainU}}) []db{{.OneToManyNewModelName}} {
+   db{{.DomainVarsU}} := make([]db{{.OneToManyNewModelName}}, len({{.DomainVar}}.{{.OneToManyNewModelPlural}}))
+   for i, {{.DomainVar}} := range {{.DomainVar}}.{{.OneToManyNewModelPlural}} {
+       db{{.DomainVarsU}}[i] = toDB{{.OneToManyNewModelName}}({{.DomainVar}})
+       db{{.DomainVarsU}}[i].{{.DomainU}}ID = {{.DomainVar}}.ID
+    }
+
+    return db{{.DomainVarsU}}
+}
+
+func toDBJSON{{.DomainU}}Array{{.OneToManyNewModelPlural}}({{.DomainVars}} []{{.DomainL}}.{{.DomainU}}) []db{{.OneToManyNewModelName}} {
+  var db{{.DomainVarsU}} []db{{.OneToManyNewModelName}}
+  for _, {{.DomainVar}} := range {{.DomainVars}} {
+    db{{.DomainVarsU}} = append(db{{.DomainVarsU}}, toDBJSON{{.DomainU}}{{.OneToManyNewModelPlural}}({{.DomainVar}})...)
+  }
+
+  return db{{.DomainVarsU}}
+}
+
+func (s *Store) delete{{.DomainU}}{{.OneToManyNewModelPlural}}(ctx context.Context, {{.DomainVar}}ID int) error {
+    data := struct {
+        ID int `db:"{{.DomainL}}_id"`
+    }{
+        ID: {{.DomainVar}}ID,
+    }
+
+    const q = `
+        DELETE FROM {{.DomainL}}_{{.OneToManyNewModelPluralL}}
+        WHERE {{.DomainL}}_id = :{{.DomainL}}_id
+    `
+
+    if err := sqldb.NamedExecContext(ctx, s.db, q, data); err != nil {
+        return fmt.Errorf("namedexeccontext: %w", err)
+    }
+
+    return nil
+}
+
+func (s *Store) create{{.DomainU}}{{.OneToManyNewModelPlural}}(ctx context.Context, {{.DomainVar}} {{.DomainL}}.{{.DomainU}}) error {
+    db{{.DomainVars}} := toDBJSON{{.DomainU}}{{.OneToManyNewModelPlural}}({{.DomainVar}})
+
+    const q = `
+        INSERT INTO {{.DomainL}}_{{.OneToManyNewModelPluralL}}
+        ({{.DomainL}}_id, {{.OneToManyNewModelNameL}}_id)
+        VALUES
+        (:{{.DomainL}}_id, :{{.OneToManyNewModelNameL}}_id)
+    `
+
+    if err := sqldb.NamedExecContext(ctx, s.db, q, db{{.DomainVars}}); err != nil {
+        if errors.Is(err, sqldb.ErrDBIntegrity) || errors.Is(err, sqldb.ErrDBDuplicatedEntry) {
+            return {{.DomainL}}.ErrDataConflict
+        }
+        return fmt.Errorf("namedexeccontext: %w", err)
+    }
+
+    return nil
+}

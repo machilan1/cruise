@@ -1,0 +1,28 @@
+#   Refer for explanation to following link:
+#   https://github.com/evilmartians/lefthook/blob/master/docs/configuration.md
+
+pre-push:
+  commands:
+    golang-lint:
+      tags: golang style
+      run: make lint
+
+pre-commit:
+  parallel: true
+  commands:
+    ts-lint:
+      glob: 'web/**/*.{js,ts,css,scss,html,json,md}'
+      run: pnpm exec nx affected --target lint --uncommitted --fix true
+      stage_fixed: true
+
+    ts-fmt:
+      tags: frontend style
+      glob: 'web/**/*.{js,ts,css,scss,html,json,md}'
+      run: pnpm exec nx format:write --uncommitted
+      stage_fixed: true
+
+    go-fmt:
+      tags: golang style
+      glob: '*.go'
+      run: make fmt
+      stage_fixed: true

@@ -1,0 +1,40 @@
+package {{.DomainL}}api
+
+import (
+    "net/http"
+
+    "{{.Module}}/internal/business/domain/{{.DomainL}}"
+    "{{.Module}}/internal/business/sdk/tran"
+    "{{.Module}}/internal/framework/logger"
+    "{{.Module}}/internal/framework/web"
+)
+
+// Config contains all the mandatory dependencies for this group of handlers.
+type Config struct {
+    Log *logger.Logger
+    TxM tran.TxManager
+    {{.DomainU}} *{{.DomainL}}.Core
+}
+
+// Routes adds specific routes for this group.
+func Routes(app *web.App, cfg Config) {
+    const version = "v1"
+{{if not .WithQueryOnly}}
+    {{.DomainVar}}Ctx := {{.DomainL}}Ctx(cfg.{{.DomainU}})
+{{end}}
+    hdl := newHandlers(cfg.Log, cfg.TxM, cfg.{{.DomainU}})
+
+    app.HandleFunc(http.MethodGet, version, "/{{.DomainPlural}}", hdl.query)
+{{- if not .WithQueryOnly}}
+    app.HandleFunc(http.MethodGet, version, "/{{.DomainPlural}}/{{"{"}}{{.DomainL}}ID}", hdl.queryByID, {{.DomainVar}}Ctx)
+    app.HandleFunc(http.MethodPost, version, "/{{.DomainPlural}}", hdl.create)
+    app.HandleFunc(http.MethodPatch, version, "/{{.DomainPlural}}/{{"{"}}{{.DomainL}}ID}", hdl.update, {{.DomainVar}}Ctx)
+    {{- if .WithSoftDelete}}
+    //TODO: If restore is ever needed, please isolate a new queryByID without using view to filter deletedAt, otherwise the precondition is not available.
+    app.HandleFunc(http.MethodDelete, version, "/{{.DomainPlural}}/{{"{"}}{{.DomainL}}ID}", hdl.softDelete, {{.DomainVar}}Ctx)
+    {{else}}
+    app.HandleFunc(http.MethodDelete, version, "/{{.DomainPlural}}/{{"{"}}{{.DomainL}}ID}", hdl.delete, {{.DomainVar}}Ctx)
+    {{end}}
+{{end}}
+    // Ready for testing:
+}

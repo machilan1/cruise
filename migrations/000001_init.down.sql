@@ -1,0 +1,7 @@
+DROP TABLE IF EXISTS system_parameters CASCADE;
+DROP VIEW IF EXISTS vb_last_email_refresh_date CASCADE;
+DROP TYPE IF EXISTS system_parameter_keys CASCADE;
+DROP INDEX IF EXISTS idx3_files_ext CASCADE;
+DROP INDEX IF EXISTS idx2_files_path CASCADE;
+DROP INDEX IF EXISTS idx_files_path CASCADE;
+DROP TABLE IF EXISTS files CASCADE;

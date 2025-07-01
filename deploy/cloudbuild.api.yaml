@@ -1,0 +1,158 @@
+steps:
+  - id: Migrate:Cache
+    name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - >-
+        docker pull $_AR_HOSTNAME/$PROJECT_ID/$_AR_REPO_ID/$REPO_NAME/$_MIGRATION_SERVICE_NAME:latest || exit 0
+    waitFor: ['-']
+
+  - id: Migrate:Build
+    name: 'gcr.io/cloud-builders/docker'
+    args:
+      - build
+      - '-t'
+      - >-
+        $_AR_HOSTNAME/$PROJECT_ID/$_AR_REPO_ID/$REPO_NAME/$_MIGRATION_SERVICE_NAME:$COMMIT_SHA
+      - '-t'
+      - >-
+        $_AR_HOSTNAME/$PROJECT_ID/$_AR_REPO_ID/$REPO_NAME/$_MIGRATION_SERVICE_NAME:latest
+      - '--cache-from'
+      - >-
+        $_AR_HOSTNAME/$PROJECT_ID/$_AR_REPO_ID/$REPO_NAME/$_MIGRATION_SERVICE_NAME:latest
+      - .
+      - '-f'
+      - build/migrate.dockerfile
+    waitFor: ['Migrate:Cache']
+
+  - id: Migrate:Run
+    name: 'gcr.io/cloud-builders/docker'
+    args:
+      - run
+      - '--network=cloudbuild'
+      - '-e'
+      - >-
+        DB_CLOUD_SQL_CONNECTION_NAME=$_DB_CLOUD_SQL_CONNECTION_NAME
+      - '-e'
+      - >-
+        DB_USER=$_DB_USER
+      - '-e'
+      - >-
+        DB_NAME=$_DB_NAME
+      - >-
+        $_AR_HOSTNAME/$PROJECT_ID/$_AR_REPO_ID/$REPO_NAME/$_MIGRATION_SERVICE_NAME:$COMMIT_SHA
+    waitFor: ['Migrate:Build']
+
+  - id: Migrate:Push
+    name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - >-
+        $_AR_HOSTNAME/$PROJECT_ID/$_AR_REPO_ID/$REPO_NAME/$_MIGRATION_SERVICE_NAME
+      - '--all-tags'
+    waitFor: ['Migrate:Build']
+
+  #    ========================
+
+  - id: App:Cache
+    name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - >-
+        docker pull $_AR_HOSTNAME/$PROJECT_ID/$_AR_REPO_ID/$REPO_NAME/$_SERVICE_NAME:latest || exit 0
+    waitFor: ['-']
+
+  - id: App:Build
+    name: 'gcr.io/cloud-builders/docker'
+    args:
+      - build
+      - '-t'
+      - >-
+        $_AR_HOSTNAME/$PROJECT_ID/$_AR_REPO_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
+      - '-t'
+      - >-
+        $_AR_HOSTNAME/$PROJECT_ID/$_AR_REPO_ID/$REPO_NAME/$_SERVICE_NAME:latest
+      - '--cache-from'
+      - >-
+        $_AR_HOSTNAME/$PROJECT_ID/$_AR_REPO_ID/$REPO_NAME/$_SERVICE_NAME:latest
+      - .
+      - '-f'
+      - build/api.dockerfile
+    waitFor: ['App:Cache']
+
+  - id: App:Push
+    name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - >-
+        $_AR_HOSTNAME/$PROJECT_ID/$_AR_REPO_ID/$REPO_NAME/$_SERVICE_NAME
+      - '--all-tags'
+    waitFor: ['App:Build']
+
+  - id: App:Deploy
+    waitFor: ['Migrate:Run', 'App:Push']
+    name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - $_SERVICE_NAME
+      - '--platform=$_PLATFORM'
+      - >-
+        --image=$_AR_HOSTNAME/$PROJECT_ID/$_AR_REPO_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
+      - >-
+        --labels=managed-by=gcp-cloud-build-deploy-cloud-run,commit-sha=$COMMIT_SHA,gcb-build-id=$BUILD_ID,gcb-trigger-id=$_TRIGGER_ID
+      - '--region=$_DEPLOY_REGION'
+      - '--quiet'
+      - '--session-affinity'
+      - '--allow-unauthenticated'
+      - '--ingress=all'
+      - '--cpu-boost'
+      - '--service-account=devops@$PROJECT_ID.iam.gserviceaccount.com'
+      # Cloud Run Options
+      - '--execution-environment=gen1' # gen1 or gen2
+      - '--port=3000' # must match your APP's port
+      - '--timeout=30s' # must be shorter than your APP's timeout, and no longer than 15m
+      - '--cpu=1'
+      - '--memory=512Mi'
+      - '--concurrency=80' # max number of requests per container instance, 1-1000
+      - '--cpu-throttling' # billing mode, must be '--cpu-throttling' or '--no-cpu-throttling'
+      - '--min-instances=1' # set to 0 to save cost, or set to 1 to reduce cold start time
+      - '--max-instances=5'
+      # Environment Variables
+      - '--set-env-vars=WEB_CORS_ALLOWED_ORIGINS=$_WEB_CORS_ALLOWED_ORIGINS'
+      - '--set-env-vars=DB_CLOUD_SQL_CONNECTION_NAME=$_DB_CLOUD_SQL_CONNECTION_NAME'
+      - '--set-env-vars=DB_USER=$_DB_USER'
+      - '--set-env-vars=DB_NAME=$_DB_NAME'
+      - '--set-env-vars=STORAGE_BUCKET=$_STORAGE_BUCKET'
+#      - '--set-env-vars=SANDBOX=$_SANDBOX'
+#      - '--set-env-vars=WEB_PUBLIC_ORIGIN=$_WEB_PUBLIC_ORIGIN'
+#      - '--set-env-vars=FRONTEND_ORIGIN=$_FRONTEND_ORIGIN'
+      # Secrets
+      - '--set-secrets=SESSION_SECRET_KEY=projects/$PROJECT_NUMBER/secrets/SESSION_SECRET_KEY/versions/latest'
+#      - '--set-secrets=OAUTH_GOOGLE_CLIENT_ID=projects/$PROJECT_NUMBER/secrets/OAUTH_GOOGLE_CLIENT_ID/versions/latest'
+#      - '--set-secrets=OAUTH_GOOGLE_CLIENT_SECRET=projects/$PROJECT_NUMBER/secrets/OAUTH_GOOGLE_CLIENT_SECRET/versions/latest'
+
+images:
+  - >-
+    $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_MIGRATION_SERVICE_NAME:$COMMIT_SHA
+  - >-
+    $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
+options:
+  machineType: E2_HIGHCPU_32
+  substitutionOption: ALLOW_LOOSE
+  logging: CLOUD_LOGGING_ONLY
+tags:
+  - gcp-cloud-build-deploy-cloud-run
+  - gcp-cloud-build-deploy-cloud-run-managed
+substitutions:
+  _DEPLOY_REGION: asia-east1
+  _AR_HOSTNAME: asia-east1-docker.pkg.dev
+  _PLATFORM: managed
+  _AR_REPO_ID: cloud-run-source-deploy
+  # NEED CONFIRMATION
+  _SERVICE_NAME: api-service
+  _MIGRATION_SERVICE_NAME: migration-service
+timeout: 600s

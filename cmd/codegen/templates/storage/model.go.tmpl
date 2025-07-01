@@ -1,0 +1,87 @@
+package {{.DomainL}}db
+
+import (
+{{- if .WithSoftDelete}}
+    "database/sql"
+{{- end}}
+    "fmt"
+    "time"
+
+    "{{.Module}}/internal/business/domain/{{.DomainL}}"
+)
+
+// db{{.DomainU}} represents an individual {{.DomainL}}.
+type db{{.DomainU}} struct {
+    ID        int       `db:"{{.DBPrefix}}_id"`
+{{- range .DBFields }}
+{{.}}
+{{- end}}
+{{- if .WithOptConcur}}
+    Etag      int       `db:"etag"`
+{{- end}}
+{{- if .NeedCUTime}}
+    CreatedAt time.Time `db:"created_at"`
+    UpdatedAt time.Time `db:"updated_at"`
+{{- end}}
+{{- if .WithSoftDelete}}
+    DeletedAt *time.Time `db:"deleted_at"`
+{{- end}}
+// codegen:{SD}
+}
+{{if not .WithQueryOnly}}
+func toDB{{.DomainU}}({{.DomainVar}} {{.DomainL}}.{{.DomainU}}) db{{.DomainU}} {
+    db{{.DomainVarU}} := db{{.DomainU}}{
+        ID:        {{.DomainVar}}.ID,
+    {{- range .ToDBStructFields }}
+    {{.}}
+    {{- end}}
+    {{- if .WithOptConcur}}
+        Etag:   {{.DomainVar}}.Etag,
+    {{- end}}
+    {{- if .NeedCUTime}}
+        CreatedAt: {{.DomainVar}}.CreatedAt,
+        UpdatedAt: {{.DomainVar}}.UpdatedAt,
+    {{- end}}
+    {{- if .WithSoftDelete}}
+        DeletedAt: {{.DomainVar}}.DeletedAt,
+    {{- end}}
+    // codegen:{tSD}
+    }
+
+    return db{{.DomainVarU}}
+}
+{{end}}
+func toCore{{.DomainU}}(db{{.DomainVarU}} db{{.DomainU}}) ({{.DomainL}}.{{.DomainU}}, error) {
+    {{.DomainVar}} := {{.DomainL}}.{{.DomainU}}{
+        ID:        db{{.DomainVarU}}.ID,
+    {{- range .ToCoreStructFields }}
+        {{.}}
+    {{- end}}
+    {{- if .WithOptConcur}}
+        Etag:      db{{.DomainVarU}}.Etag,
+    {{- end}}
+    {{- if .NeedCUTime}}
+        CreatedAt: db{{.DomainVarU}}.CreatedAt,
+        UpdatedAt: db{{.DomainVarU}}.UpdatedAt,
+    {{- end}}
+    {{- if .WithSoftDelete}}
+        DeletedAt: db{{.DomainVarU}}.DeletedAt,
+    {{- end}}
+    // codegen:{tBD}
+    }
+
+    return {{.DomainVar}}, nil
+}
+
+func toCore{{.DomainPluralU}}(db{{.DomainPluralU}} []db{{.DomainU}}) ([]{{.DomainL}}.{{.DomainU}}, error) {
+    {{.DomainVars}} := make([]{{.DomainL}}.{{.DomainU}}, len(db{{.DomainPluralU}}))
+    for i, db{{.DomainVarU}} := range db{{.DomainPluralU}} {
+        {{.DomainVar}}, err := toCore{{.DomainU}}(db{{.DomainVarU}})
+        if err != nil {
+            return nil, fmt.Errorf("parse type: %w", err)
+        }
+        {{.DomainVars}}[i] = {{.DomainVar}}
+    }
+
+    return {{.DomainVars}}, nil
+}

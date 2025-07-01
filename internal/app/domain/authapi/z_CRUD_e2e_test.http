@@ -1,0 +1,76 @@
+## TODO: Instruct copilot to auto write e2e tests based on route patterns.
+
+@baseUrl = http://localhost:3000/v1
+@pattern = auth
+
+### forget password
+POST {{baseUrl}}/{{pattern}}/forgot-password
+X-Test-Renew: True
+
+{
+  "email": "a123456@gmail.com"
+}
+
+### Login
+POST {{baseUrl}}/{{pattern}}/login
+X-Test-Renew: True
+
+{
+  "username": "user001",
+  "password": "password123"
+}
+
+### Reset My profile(display name)
+PUT {{baseUrl}}/{{pattern}}/me
+X-Test-Renew: True
+
+{
+  "displayName": "今晚打老虎"
+}
+
+### Reset Password
+PUT {{baseUrl}}/{{pattern}}/users/1/reset-password
+X-Test-Renew: True
+
+{
+  "newPassword": ""
+}
+
+### Register
+POST {{baseUrl}}/{{pattern}}/register
+X-Test-Renew: True
+Content-Type: application/json
+
+{
+  "username": "user001",
+  "displayName": "張雨生",
+  "usertype": "admin",
+  "employeeId": 1,
+  "password": "password123"
+}
+
+### Get
+GET {{baseUrl}}/{{pattern}}/users
+X-Test-Renew: True
+
+### Get
+GET {{baseUrl}}/{{pattern}}/me
+X-Test-Renew: True
+
+### Update usertypes
+PUT {{baseUrl}}/{{pattern}}/reset-user-types
+X-Test-Renew: True
+
+{
+  "updateUserTypeUsers": [
+    {
+      "userId": 1,
+      "userType": "superAdmin"
+    },
+    {
+      "userId": 2,
+      "userType": "superAdmin"
+    }
+
+  ]
+}

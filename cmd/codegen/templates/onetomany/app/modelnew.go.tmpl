@@ -1,0 +1,137 @@
+package {{.DomainL}}api
+
+import (
+    "time"
+
+    "{{.Module}}/internal/business/domain/{{.DomainL}}"
+    "{{.Module}}/internal/framework/validate"
+)
+
+type App{{.OneToManyNewModelName}} struct {
+    ID        int       `json:"id"`
+    {{- range .JSONFields }}
+    {{.}}
+    {{- end}}
+    {{- if .NeedCUTime}}
+    CreatedAt time.Time `json:"createdAt"`
+    UpdatedAt time.Time `json:"updatedAt"`
+    {{- end}}
+    {{- if .WithOptConcur}}
+    Etag      int       `json:"etag"`
+    {{end}}
+    // codegen:{AD}
+}
+
+func toApp{{.OneToManyNewModelName}}({{.DomainVar}} {{.DomainL}}.{{.OneToManyNewModelName}}) App{{.OneToManyNewModelName}} {
+    return App{{.OneToManyNewModelName}}{
+        ID:        {{.DomainVar}}.ID,
+        {{- range .ToAppStructFields }}
+        {{.}}
+        {{- end}}
+        {{- if .NeedCUTime}}
+        CreatedAt: {{.DomainVar}}.CreatedAt,
+        UpdatedAt: {{.DomainVar}}.UpdatedAt,
+        {{- end}}
+        {{- if .WithOptConcur}}
+        Etag:   {{.DomainVar}}.Etag,
+        {{end}}
+        // codegen:{tAD}
+    }
+}
+
+func toApp{{.OneToManyNewModelPlural}}({{.DomainVars}} []{{.DomainL}}.{{.OneToManyNewModelName}}) []App{{.OneToManyNewModelName}} {
+    items := make([]App{{.OneToManyNewModelName}}, len({{.DomainVars}}))
+    for i, {{.DomainVar}} := range {{.DomainVars}} {
+        items[i] = toApp{{.OneToManyNewModelName}}({{.DomainVar}})
+    }
+
+    return items
+}
+{{if not .WithQueryOnly}}
+// =============================================================================
+
+type AppNew{{.OneToManyNewModelName}} struct {
+{{- range .JSONFields }}
+{{.}}
+{{- end}}
+// codegen:{AN}
+}
+
+func (app AppNew{{.OneToManyNewModelName}}) Validate() error {
+    if err := validate.Check(app); err != nil {
+        return err
+    }
+
+    return nil
+}
+
+func toCoreNew{{.OneToManyNewModelName}}(app AppNew{{.OneToManyNewModelName}}) ({{.DomainL}}.New{{.OneToManyNewModelName}}, error) {
+    // codegen:{tManyBN}
+    {{.DomainNewVar}} := {{.DomainL}}.New{{.OneToManyNewModelName}}{
+    {{- range .ToCoreNewStructFields }}
+    {{.}}
+    {{- end}}
+    // codegen:{tBN}
+    }
+
+    return {{.DomainNewVar}}, nil
+}
+
+func toCoreNew{{.OneToManyNewModelPlural}}(apps []AppNew{{.OneToManyNewModelName}}) ([]{{.DomainL}}.New{{.OneToManyNewModelName}}, error){
+ items := make([]{{.DomainL}}.New{{.OneToManyNewModelName}}, len(apps))
+    for i, app := range apps {
+        item, err := toCoreNew{{.OneToManyNewModelName}}(app)
+        if err != nil {
+            return nil, err
+        }
+        items[i] = item
+    }
+
+    return items, nil
+}
+
+// =============================================================================
+
+type AppUpdate{{.OneToManyNewModelName}} struct {
+    {{- range .AppUpdateStructFields }}
+    {{.}}
+    {{- end}}
+    {{- if .WithOptConcur}}
+    Etag   int       `json:"etag"`
+    {{end}}
+    // codegen:{AU}
+}
+
+func (app AppUpdate{{.OneToManyNewModelName}}) Validate() error {
+    if err := validate.Check(app); err != nil {
+        return err
+    }
+
+    return nil
+}
+
+func toCoreUpdate{{.OneToManyNewModelName}}(app AppUpdate{{.OneToManyNewModelName}}) ({{.DomainL}}.Update{{.OneToManyNewModelName}}, error) {
+    // codegen:{tManyBU}
+    {{.DomainUpdVar}} := {{.DomainL}}.Update{{.OneToManyNewModelName}}{
+    {{- range .ToCoreUpdateStructFields }}
+    {{.}}
+    {{- end}}
+    // codegen:{tBU}
+    }
+
+    return {{.DomainUpdVar}}, nil
+}
+{{end}}
+
+func toCoreUpdate{{.OneToManyNewModelPlural}}(apps []AppUpdate{{.OneToManyNewModelName}}) ([]{{.DomainL}}.Update{{.OneToManyNewModelName}}, error){
+ items := make([]{{.DomainL}}.Update{{.OneToManyNewModelName}}, len(apps))
+    for i, app := range apps {
+        item, err := toCoreUpdate{{.OneToManyNewModelName}}(app)
+        if err != nil {
+            return nil, err
+        }
+        items[i] = item
+    }
+
+    return items, nil
+}

@@ -1,0 +1,11 @@
+.git
+.github/
+.gitignore
+.dockerignore
+*Dockerfile*
+*.dockerfile*
+*docker-compose*
+node_modules/
+.env
+docs/
+tools/
