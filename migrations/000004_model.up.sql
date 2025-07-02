@@ -1,5 +1,0 @@
--- CREATE IF NOT EXISTS TABLE models (
---     model_id serial PRIMARY KEY,
---     brand_id int 
---     model_name text NOT NULL check (model_name <>'')
--- )

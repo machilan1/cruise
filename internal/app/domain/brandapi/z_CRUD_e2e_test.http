@@ -11,7 +11,7 @@ GET {{baseUrl}}/{{pattern}}/1
 POST {{baseUrl}}/{{pattern}}
 
 {
-  "name":"BENZ",
+  "name":"BMW",
   "logo":"MockFile1.png"
 }
 
@@ -24,4 +24,4 @@ PUT {{baseUrl}}/{{pattern}}/1
 }
 
 ### ADMIN: Delete
-DELETE {{baseUrl}}/{{pattern}}/2
+DELETE {{baseUrl}}/{{pattern}}/1

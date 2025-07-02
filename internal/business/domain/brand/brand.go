@@ -99,7 +99,6 @@ func (c *Core) Update(ctx context.Context, d Brand, ub UpdateBrand) (Brand, erro
 }
 
 func (c *Core) Delete(ctx context.Context, id int) error {
-
 	if err := c.storer.Delete(ctx, id); err != nil {
 		return fmt.Errorf("delete: %w", err)
 	}

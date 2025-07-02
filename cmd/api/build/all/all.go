@@ -5,6 +5,7 @@ import (
 	"github.com/machilan1/cruise/internal/app/domain/brandapi"
 	"github.com/machilan1/cruise/internal/app/domain/fileapi"
 	"github.com/machilan1/cruise/internal/app/domain/healthapi"
+	"github.com/machilan1/cruise/internal/app/domain/vehiclemodelapi"
 	"github.com/machilan1/cruise/internal/app/sdk/mux"
 	"github.com/machilan1/cruise/internal/business/domain/auth"
 	"github.com/machilan1/cruise/internal/business/domain/auth/stores/authdb"
@@ -13,6 +14,8 @@ import (
 	"github.com/machilan1/cruise/internal/business/domain/file"
 	"github.com/machilan1/cruise/internal/business/domain/file/stores/filedb"
 	"github.com/machilan1/cruise/internal/business/domain/notification"
+	"github.com/machilan1/cruise/internal/business/domain/vehiclemodel"
+	"github.com/machilan1/cruise/internal/business/domain/vehiclemodel/stores/vehiclemodeldb"
 	"github.com/machilan1/cruise/internal/framework/web"
 )
 
@@ -27,6 +30,7 @@ func (add) Add(app *web.App, cfg mux.Config) {
 	authCore := auth.NewCore(authdb.NewStore(cfg.DB), cfg.JWTKey)
 	notifyCore := notification.NewCore(cfg.Mailer, cfg.FrontendOrigin)
 	brandCore := brand.NewCore(branddb.NewStore(cfg.DB))
+	vehiclemodelCore := vehiclemodel.NewCore(vehiclemodeldb.NewStore(cfg.DB))
 
 	healthapi.Routes(app, healthapi.Config{
 		Log: cfg.Log,
@@ -55,5 +59,13 @@ func (add) Add(app *web.App, cfg mux.Config) {
 		Sess:  cfg.Sess,
 		Auth:  authCore,
 		Brand: brandCore,
+	})
+
+	vehiclemodelapi.Routes(app, vehiclemodelapi.Config{
+		Log:          cfg.Log,
+		TxM:          cfg.TxM,
+		Sess:         cfg.Sess,
+		Auth:         authCore,
+		VehicleModel: vehiclemodelCore,
 	})
 }
