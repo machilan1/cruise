@@ -9,7 +9,7 @@ import (
 type AppBrand struct {
 	ID        int       `json:"brandId"`
 	Name      string    `json:"name"`
-	Logo      *string   `json:"logo"`
+	LogoImage *string   `json:"logoImage"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }
@@ -18,7 +18,7 @@ func toAppBrand(brd brand.Brand) AppBrand {
 	return AppBrand{
 		ID:        brd.ID,
 		Name:      brd.Name,
-		Logo:      brd.Logo,
+		LogoImage: brd.LogoImage,
 		CreatedAt: brd.CreatedAt,
 		UpdatedAt: brd.UpdatedAt,
 	}
@@ -33,23 +33,23 @@ func toAppBrands(brds []brand.Brand) []AppBrand {
 }
 
 type AppNewBrand struct {
-	Name string  `json:"name"`
-	Logo *string `json:"logo"`
+	Name      string  `json:"name"`
+	LogoImage *string `json:"logoImage"`
 }
 
 func toCoreNewBrand(abrd AppNewBrand) brand.NewBrand {
 	return brand.NewBrand{
-		Name: abrd.Name,
-		Logo: abrd.Logo,
+		Name:      abrd.Name,
+		LogoImage: abrd.LogoImage,
 	}
 }
 
 type AppUpdateBrand struct {
-	Logo string `json:"logo"`
+	LogoImage string `json:"logoImage"`
 }
 
 func toCoreUpdateBrand(aubrd AppUpdateBrand) brand.UpdateBrand {
 	return brand.UpdateBrand{
-		Logo: aubrd.Logo,
+		LogoImage: aubrd.LogoImage,
 	}
 }

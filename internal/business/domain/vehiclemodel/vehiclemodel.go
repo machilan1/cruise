@@ -15,6 +15,7 @@ var (
 	ErrInvalidFuelType         = errors.New("invalid fuel type")
 	ErrInvalidBodyStyle        = errors.New("invalid body style")
 	ErrInvalidTransmissionType = errors.New("invalid transmission style")
+	ErrInvalidEngineType       = errors.New("invalid engine type")
 	ErrDuplicatedModel         = errors.New("duplicated model")
 )
 

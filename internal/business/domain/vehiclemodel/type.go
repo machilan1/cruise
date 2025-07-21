@@ -110,3 +110,30 @@ func ParseTransmissionType(tm string) (TransmissionType, error) {
 		return "", ErrInvalidTransmissionType
 	}
 }
+
+type EngineType string
+
+const (
+	EngineTypeV      = "v"
+	EngineTypeInline = "inline"
+	EngineTypeBoxer  = "boxer"
+	EngineTypeRotary = "rotary"
+	EngineTypeOthers = "others"
+)
+
+func ParseEngineType(et string) (EngineType, error) {
+	switch et {
+	case string(EngineTypeV):
+		return EngineTypeV, nil
+	case string(EngineTypeInline):
+		return EngineTypeInline, nil
+	case string(EngineTypeBoxer):
+		return EngineTypeBoxer, nil
+	case string(EngineTypeRotary):
+		return EngineTypeRotary, nil
+	case string(EngineTypeOthers):
+		return EngineTypeOthers, nil
+	default:
+		return "", ErrInvalidEngineType
+	}
+}

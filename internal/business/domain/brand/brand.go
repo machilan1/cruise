@@ -66,7 +66,7 @@ func (c *Core) Create(ctx context.Context, nb NewBrand) (Brand, error) {
 	now := time.Now()
 	d := Brand{
 		Name:      nb.Name,
-		Logo:      nb.Logo,
+		LogoImage: nb.LogoImage,
 		CreatedAt: now,
 		UpdatedAt: now,
 	}
@@ -83,7 +83,7 @@ func (c *Core) Update(ctx context.Context, d Brand, ub UpdateBrand) (Brand, erro
 	now := time.Now()
 
 	d.UpdatedAt = now
-	d.Logo = &ub.Logo
+	d.LogoImage = &ub.LogoImage
 
 	d, err := c.storer.Update(ctx, d)
 	if err != nil {

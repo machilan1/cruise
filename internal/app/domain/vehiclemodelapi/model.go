@@ -5,6 +5,7 @@ import (
 
 	"github.com/machilan1/cruise/internal/app/sdk/errs"
 	"github.com/machilan1/cruise/internal/business/domain/vehiclemodel"
+	"github.com/machilan1/cruise/internal/framework/validate"
 )
 
 type AppVehicleModel struct {
@@ -47,16 +48,23 @@ func toAppVehicleModels(vms []vehiclemodel.VehicleModel) []AppVehicleModel {
 }
 
 type AppNewVehicleModel struct {
-	SeriesName         string  `json:"seriesName"`
-	CommercialName     string  `json:"commercialName"`
-	ModelYear          int     `json:"modelYear"`
-	BrandID            int     `json:"brandId"`
-	Nickname           *string `json:"nickname"`
-	EngineDisplacement int     `json:"engineDisplacement"`
-	DriveType          string  `json:"driveType"`
-	FuelType           string  `json:"fuelType"`
-	BodyStyle          string  `json:"bodyStyle"`
-	TransmissionType   string  `json:"transmissionType"`
+	SeriesName         string  `json:"seriesName" validate:"required"`
+	CommercialName     string  `json:"commercialName" validate:"required"`
+	ModelYear          int     `json:"modelYear" validate:"required"`
+	BrandID            int     `json:"brandId" validate:"required"`
+	Nickname           *string `json:"nickname" validate:"required"`
+	EngineDisplacement int     `json:"engineDisplacement" validate:"required"`
+	DriveType          string  `json:"driveType" validate:"oneof=fwd rwd 4wd awd others"`
+	FuelType           string  `json:"fuelType" validate:"oneof=diesel gasoline electric gas others"`
+	BodyStyle          string  `json:"bodyStyle" validate:"oneof=sedan wagon hatchback gt sports van truck suv others"`
+	TransmissionType   string  `json:"transmissionType" validate:"oneof=automatic manual"`
+}
+
+func (app AppNewVehicleModel) Validate() error {
+	if err := validate.Check(app); err != nil {
+		return err
+	}
+	return nil
 }
 
 func toCoreNewVehicleModel(anvm AppNewVehicleModel) (vehiclemodel.NewVehicleModel, error) {

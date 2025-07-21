@@ -9,16 +9,16 @@ import (
 type dbBrand struct {
 	ID        int       `db:"brand_id"`
 	Name      string    `db:"brand_name"`
-	Logo      *string   `db:"logo"`
+	LogoImage *string   `db:"logo_image"`
 	CreatedAt time.Time `db:"created_at"`
 	UpdatedAt time.Time `db:"updated_at"`
 }
 
 func toCoreBrand(dbb dbBrand) brand.Brand {
 	return brand.Brand{
-		ID:   dbb.ID,
-		Name: dbb.Name,
-		Logo: dbb.Logo,
+		ID:        dbb.ID,
+		Name:      dbb.Name,
+		LogoImage: dbb.LogoImage,
 	}
 }
 
@@ -32,8 +32,8 @@ func toCoreBrands(dbbs []dbBrand) []brand.Brand {
 
 func toDBBrand(brd brand.Brand) dbBrand {
 	return dbBrand{
-		ID:   brd.ID,
-		Name: brd.Name,
-		Logo: brd.Logo,
+		ID:        brd.ID,
+		Name:      brd.Name,
+		LogoImage: brd.LogoImage,
 	}
 }

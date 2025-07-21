@@ -2,6 +2,7 @@ CREATE TYPE drive_types AS ENUM('fwd','rwd','4wd','awd','others');
 CREATE TYPE fuel_types AS ENUM('diesel','gasoline','electric','gas','others');
 CREATE TYPE body_styles AS ENUM('sedan','wagon', 'hatchback','gt','sports','van','truck','suv','others');
 CREATE TYPE transmission_types AS ENUM('automatic','manual');
+CREATE IF NOT EXISTS TYPE engine_types AS ENUM('v','inline','boxer','rotary','others');
 
 CREATE TABLE IF NOT EXISTS vehicle_models (
     vehicle_model_id serial PRIMARY KEY,
@@ -15,6 +16,7 @@ CREATE TABLE IF NOT EXISTS vehicle_models (
     fuel_type fuel_types NOT NULL,
     body_style body_styles NOT NULL,
     transmission_type transmission_types NOT NULL,
+    engine_type engine_types NOT NULL,
     CONSTRAINT uq_brand_id_series_name_model_year_model_commercial_name UNIQUE(brand_id,model_series_name,model_year,model_commercial_name)
 )
 

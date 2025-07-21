@@ -74,7 +74,7 @@ func (h *handlers) queryByID(ctx context.Context, w http.ResponseWriter, r *http
 func (h *handlers) create(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 	var anbrd AppNewBrand
 	if err := web.Decode(r, &anbrd); err != nil {
-		return err
+		return errs.NewTrustedError(err, http.StatusBadRequest)
 	}
 
 	var brd brand.Brand
@@ -115,7 +115,7 @@ func (h *handlers) update(ctx context.Context, w http.ResponseWriter, r *http.Re
 
 	var aubrd AppUpdateBrand
 	if err := web.Decode(r, &aubrd); err != nil {
-		return err
+		return errs.NewTrustedError(err, http.StatusBadRequest)
 	}
 
 	if err := h.txM.RunTx(ctx, func(txM tran.TxManager) error {
