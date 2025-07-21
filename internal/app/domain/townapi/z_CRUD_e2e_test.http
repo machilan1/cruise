@@ -1,0 +1,13 @@
+## TODO: Instruct copilot to auto write e2e tests based on route patterns.
+
+@baseUrl = http://localhost:3000/v1
+@pattern = cities
+@pattern2= towns
+
+### Get
+GET {{baseUrl}}/{{pattern}}
+X-Test-Renew: True
+
+### Get
+GET {{baseUrl}}/{{pattern}}/1/{{pattern2}}
+X-Test-Renew: True

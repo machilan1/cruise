@@ -1,0 +1,5 @@
+-- CREATE IF NOT EXISTS TABLE auctions(
+--     auction_id bigserial PRIMARY KEY,
+--     auction_date timestamptz NOT NULL,
+--     created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP
+-- )
