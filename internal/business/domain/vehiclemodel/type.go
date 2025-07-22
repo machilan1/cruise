@@ -57,15 +57,15 @@ func ParseFuelType(ft string) (FuelType, error) {
 type BodyStyle string
 
 const (
-	BodyStyleSedan     = "sedan"
-	BodyStyleWagon     = "wagon"
-	BodyStyleHatchback = "hatchback"
-	BodyStyleGt        = "gt"
-	BodyStyleSports    = "sports"
-	BodyStyleVan       = "van"
-	BodyStyleTruck     = "truck"
-	BodyStyleSuv       = "suv"
-	BodyStyleOthers    = "others"
+	BodyStyleSedan     BodyStyle = "sedan"
+	BodyStyleWagon     BodyStyle = "wagon"
+	BodyStyleHatchback BodyStyle = "hatchback"
+	BodyStyleGt        BodyStyle = "gt"
+	BodyStyleSports    BodyStyle = "sports"
+	BodyStyleVan       BodyStyle = "van"
+	BodyStyleTruck     BodyStyle = "truck"
+	BodyStyleSuv       BodyStyle = "suv"
+	BodyStyleOthers    BodyStyle = "others"
 )
 
 func ParseBodyStyle(bs string) (BodyStyle, error) {
@@ -96,8 +96,8 @@ func ParseBodyStyle(bs string) (BodyStyle, error) {
 type TransmissionType string
 
 const (
-	TransmissionTypeAuto   = "automatic"
-	TransmissionTypeManual = "manual"
+	TransmissionTypeAuto   TransmissionType = "automatic"
+	TransmissionTypeManual TransmissionType = "manual"
 )
 
 func ParseTransmissionType(tm string) (TransmissionType, error) {
@@ -114,11 +114,11 @@ func ParseTransmissionType(tm string) (TransmissionType, error) {
 type EngineType string
 
 const (
-	EngineTypeV      = "v"
-	EngineTypeInline = "inline"
-	EngineTypeBoxer  = "boxer"
-	EngineTypeRotary = "rotary"
-	EngineTypeOthers = "others"
+	EngineTypeV      EngineType = "v"
+	EngineTypeInline EngineType = "inline"
+	EngineTypeBoxer  EngineType = "boxer"
+	EngineTypeRotary EngineType = "rotary"
+	EngineTypeOthers EngineType = "others"
 )
 
 func ParseEngineType(et string) (EngineType, error) {
