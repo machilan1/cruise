@@ -3,12 +3,12 @@ CREATE TYPE vehicle_sources AS ENUM('judicial','commission','oversea','unknown')
 CREATE TYPE wheel_sides AS ENUM('left','right','others');
 CREATE TYPE special_incident_types AS ENUM('casualty','suicide','watered');
 
-CREATE IF NOT EXISTS TABLE listed_vehicle (
+CREATE TABLE IF NOT EXISTS listed_vehicle (
     listed_vehicle_id       SERIAL PRIMARY KEY,
     licensed_at             timestamptz,
     brand_id                int REFERENCES brands(brand_id),
     model_id                int REFERENCES vehicle_models(vehicle_model_id),
-    manufactured_date       date with time zone DEFAULT CURRENT_TIMESTAMP,
+    manufactured_date       timestamptz DEFAULT CURRENT_TIMESTAMP,
     door_count              int NOT NULL,
     key_count               int DEFAULT 0,
     color                   text NOT NULL,

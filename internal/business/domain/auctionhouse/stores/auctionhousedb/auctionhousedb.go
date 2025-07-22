@@ -44,8 +44,8 @@ func (s *Store) Query(ctx context.Context, filter auctionhouse.QueryFilter) ([]a
 					'city_id',			c.city_id,
 					'city_name', 		c.city_name,
 					'town_id', 			ct.town_id,
-					'town_name', 		ct.town_name,
-				) as location
+					'town_name', 		ct.town_name
+				) as location,
 			ah.town_id,
 			ah.address_detail,
 			ah.created_at,
@@ -57,10 +57,11 @@ func (s *Store) Query(ctx context.Context, filter auctionhouse.QueryFilter) ([]a
 	`
 
 	var sb strings.Builder
+	sb.WriteString(q)
 	applyFilter(filter, data, &sb)
 
 	var dbahs []dbAuctionHouse
-	if err := sqldb.NamedQuerySlice(ctx, s.db, q, data, &dbahs); err != nil {
+	if err := sqldb.NamedQuerySlice(ctx, s.db, sb.String(), data, &dbahs); err != nil {
 		return nil, fmt.Errorf("namedqueryslice: %w", err)
 	}
 
@@ -81,8 +82,8 @@ func (s *Store) QueryByID(ctx context.Context, ahID int) (auctionhouse.AuctionHo
 					'city_id',			c.city_id,
 					'city_name', 		c.city_name,
 					'town_id', 			ct.town_id,
-					'town_name', 		ct.town_name,
-				) as location
+					'town_name', 		ct.town_name
+				) as location,
 			ah.town_id,
 			ah.address_detail,
 			ah.created_at,
@@ -91,7 +92,7 @@ func (s *Store) QueryByID(ctx context.Context, ahID int) (auctionhouse.AuctionHo
 		FROM auction_houses ah
 		LEFT JOIN city_towns ct ON ah.town_id = ct.town_id
 		LEFT JOIN cities c ON ct.city_id = c.city_id
-		WHERE ah.auction_house_id  = :auction_house_id
+		WHERE ah.auction_house_id  = :auction_house_id AND ah.deleted_at IS NULL
 	`
 
 	var dbah dbAuctionHouse
@@ -121,7 +122,7 @@ func (s *Store) Create(ctx context.Context, ah auctionhouse.AuctionHouse) (aucti
 			:created_at,
 			:updated_at
 		)
-		RETURNING action_house_id
+		RETURNING auction_house_id
 	`
 
 	if err := sqldb.NamedQueryStruct(ctx, s.db, q, dba, &dba); err != nil {
@@ -144,11 +145,12 @@ func (s *Store) Update(ctx context.Context, ah auctionhouse.AuctionHouse) (aucti
 
 	const q = `
 		UPDATE auction_houses
-		SET auction_house_name = :auction_house_name,
-			address_detail = :address_detail,
-			town_id = :town_id,
-			updated_at = :updated_at
-		WHERE auction_house_id = :auction_house_id
+		SET auction_house_name 	= :auction_house_name,
+			address_detail 		= :address_detail,
+			town_id 			= :town_id,
+			updated_at 			= :updated_at
+		WHERE auction_house_id 	= :auction_house_id
+		RETURNING auction_house_id
 	`
 
 	if err := sqldb.NamedQueryStruct(ctx, s.db, q, dba, &dba); err != nil {
@@ -180,7 +182,7 @@ func (s *Store) Archive(ctx context.Context, ahID int) error {
 	}
 
 	const q = `
-		UPDATE auction_house
+		UPDATE auction_houses
 		SET updated_at = CURRENT_TIMESTAMP,
 			deleted_at = CURRENT_TIMESTAMP
 		WHERE auction_house_id = :auction_house_id AND deleted_at IS NULL

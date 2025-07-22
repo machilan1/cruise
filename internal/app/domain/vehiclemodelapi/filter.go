@@ -1,10 +1,10 @@
 package vehiclemodelapi
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
-	"github.com/machilan1/cruise/internal/app/sdk/errs"
 	"github.com/machilan1/cruise/internal/business/domain/vehiclemodel"
 )
 
@@ -28,7 +28,7 @@ func parseQueryFilter(qp QueryParams) (vehiclemodel.QueryFilter, error) {
 	if qp.BrandID != "" {
 		id, err := strconv.Atoi(qp.BrandID)
 		if err != nil {
-			return vehiclemodel.QueryFilter{}, errs.NewTrustedError(err, http.StatusBadRequest)
+			return vehiclemodel.QueryFilter{}, fmt.Errorf("invalid brand id")
 		}
 		filter.BrandID = &id
 	}

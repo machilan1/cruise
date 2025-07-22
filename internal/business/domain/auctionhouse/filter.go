@@ -1,3 +1,5 @@
 package auctionhouse
 
-type QueryFilter struct{}
+type QueryFilter struct {
+	CityID *int
+}

@@ -1,12 +1,15 @@
 package all
 
 import (
+	"github.com/machilan1/cruise/internal/app/domain/auctionhouseapi"
 	"github.com/machilan1/cruise/internal/app/domain/authapi"
 	"github.com/machilan1/cruise/internal/app/domain/brandapi"
 	"github.com/machilan1/cruise/internal/app/domain/fileapi"
 	"github.com/machilan1/cruise/internal/app/domain/healthapi"
 	"github.com/machilan1/cruise/internal/app/domain/vehiclemodelapi"
 	"github.com/machilan1/cruise/internal/app/sdk/mux"
+	"github.com/machilan1/cruise/internal/business/domain/auctionhouse"
+	"github.com/machilan1/cruise/internal/business/domain/auctionhouse/stores/auctionhousedb"
 	"github.com/machilan1/cruise/internal/business/domain/auth"
 	"github.com/machilan1/cruise/internal/business/domain/auth/stores/authdb"
 	"github.com/machilan1/cruise/internal/business/domain/brand"
@@ -30,7 +33,8 @@ func (add) Add(app *web.App, cfg mux.Config) {
 	authCore := auth.NewCore(authdb.NewStore(cfg.DB), cfg.JWTKey)
 	notifyCore := notification.NewCore(cfg.Mailer, cfg.FrontendOrigin)
 	brandCore := brand.NewCore(branddb.NewStore(cfg.DB))
-	vehiclemodelCore := vehiclemodel.NewCore(vehiclemodeldb.NewStore(cfg.DB))
+	vehicleModelCore := vehiclemodel.NewCore(vehiclemodeldb.NewStore(cfg.DB))
+	auctionHouseCore := auctionhouse.NewCore(auctionhousedb.NewStore(cfg.DB))
 
 	healthapi.Routes(app, healthapi.Config{
 		Log: cfg.Log,
@@ -66,6 +70,14 @@ func (add) Add(app *web.App, cfg mux.Config) {
 		TxM:          cfg.TxM,
 		Sess:         cfg.Sess,
 		Auth:         authCore,
-		VehicleModel: vehiclemodelCore,
+		VehicleModel: vehicleModelCore,
+	})
+
+	auctionhouseapi.Routes(app, auctionhouseapi.Config{
+		Log:          cfg.Log,
+		TxM:          cfg.TxM,
+		Sess:         cfg.Sess,
+		Auth:         authCore,
+		AuctionHouse: auctionHouseCore,
 	})
 }

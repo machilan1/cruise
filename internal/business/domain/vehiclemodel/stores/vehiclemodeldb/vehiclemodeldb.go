@@ -55,7 +55,6 @@ func (s *Store) Query(ctx context.Context, filter vehiclemodel.QueryFilter) ([]v
 	`
 
 	var sb strings.Builder
-
 	sb.WriteString(q)
 	applyFilter(filter, data, &sb)
 

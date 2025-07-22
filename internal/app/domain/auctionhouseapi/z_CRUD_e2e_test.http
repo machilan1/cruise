@@ -1,0 +1,30 @@
+@baseUrl = http://localhost:3000/v1
+@pattern = auction-houses
+
+### AUTH: Get
+GET {{baseUrl}}/{{pattern}}
+
+### AUTH: Get by id
+GET {{baseUrl}}/{{pattern}}/1
+
+### ADMIN: Create
+POST {{baseUrl}}/{{pattern}}
+
+{
+"name":"永和拍場",
+"addressDetail":"大同路一段12號",
+"townId":1
+}
+
+### ADMIN: Update
+
+PUT {{baseUrl}}/{{pattern}}/1
+
+{
+"name":"明泉拍場",
+"addressDetail":"金洋路一段12號",
+"townId":88
+}
+
+### ADMIN: Archive
+DELETE {{baseUrl}}/{{pattern}}/1

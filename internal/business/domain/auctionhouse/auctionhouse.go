@@ -83,6 +83,7 @@ func (c *Core) Create(ctx context.Context, nah NewAuctionHouse) (AuctionHouse, e
 }
 
 func (c *Core) Update(ctx context.Context, uah UpdateAuctionHouse, ah AuctionHouse) (AuctionHouse, error) {
+	now := time.Now()
 
 	if uah.Name != nil {
 		ah.Name = *uah.Name
@@ -95,6 +96,8 @@ func (c *Core) Update(ctx context.Context, uah UpdateAuctionHouse, ah AuctionHou
 	if uah.TownID != nil {
 		ah.Location.TownID = *uah.TownID
 	}
+
+	ah.UpdatedAt = now
 
 	ah, err := c.storer.Update(ctx, ah)
 	if err != nil {
