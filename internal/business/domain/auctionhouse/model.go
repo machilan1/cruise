@@ -12,21 +12,21 @@ type AuctionHouse struct {
 }
 
 type AuctionHouseLocation struct {
-	Address  string
-	CityID   int
-	CityName string
-	TownID   int
-	TownName string
+	AddressDetail string
+	CityID        int
+	CityName      string
+	TownID        int
+	TownName      string
 }
 
 type NewAuctionHouse struct {
-	Name    string
-	Address string
-	TownID  int
+	Name          string
+	AddressDetail string
+	TownID        int
 }
 
 type UpdateAuctionHouse struct {
-	Name    *string
-	Address *string
-	TownID  *int
+	Name          *string
+	AddressDetail *string
+	TownID        *int
 }

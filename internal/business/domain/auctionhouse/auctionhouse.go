@@ -67,8 +67,8 @@ func (c *Core) Create(ctx context.Context, nah NewAuctionHouse) (AuctionHouse, e
 	au := AuctionHouse{
 		Name: nah.Name,
 		Location: AuctionHouseLocation{
-			Address: nah.Address,
-			TownID:  nah.TownID,
+			AddressDetail: nah.AddressDetail,
+			TownID:        nah.TownID,
 		},
 		CreatedAt: now,
 		UpdatedAt: now,
@@ -88,8 +88,8 @@ func (c *Core) Update(ctx context.Context, uah UpdateAuctionHouse, ah AuctionHou
 		ah.Name = *uah.Name
 	}
 
-	if uah.Address != nil {
-		ah.Location.Address = *uah.Address
+	if uah.AddressDetail != nil {
+		ah.Location.AddressDetail = *uah.AddressDetail
 	}
 
 	if uah.TownID != nil {
