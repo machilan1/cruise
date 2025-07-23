@@ -7,6 +7,7 @@ import (
 	"github.com/machilan1/cruise/internal/app/domain/brandseriesapi"
 	"github.com/machilan1/cruise/internal/app/domain/fileapi"
 	"github.com/machilan1/cruise/internal/app/domain/healthapi"
+	"github.com/machilan1/cruise/internal/app/domain/seriesmodelapi"
 	"github.com/machilan1/cruise/internal/app/sdk/mux"
 	"github.com/machilan1/cruise/internal/business/domain/auctionhouse"
 	"github.com/machilan1/cruise/internal/business/domain/auctionhouse/stores/auctionhousedb"
@@ -19,6 +20,8 @@ import (
 	"github.com/machilan1/cruise/internal/business/domain/file"
 	"github.com/machilan1/cruise/internal/business/domain/file/stores/filedb"
 	"github.com/machilan1/cruise/internal/business/domain/notification"
+	"github.com/machilan1/cruise/internal/business/domain/seriesmodel"
+	"github.com/machilan1/cruise/internal/business/domain/seriesmodel/stores/seriesmodeldb"
 	"github.com/machilan1/cruise/internal/framework/web"
 )
 
@@ -34,6 +37,7 @@ func (add) Add(app *web.App, cfg mux.Config) {
 	notifyCore := notification.NewCore(cfg.Mailer, cfg.FrontendOrigin)
 	brandCore := brand.NewCore(branddb.NewStore(cfg.DB))
 	brandSeriesCore := brandseries.NewCore(brandseriesdb.NewStore(cfg.DB))
+	seriesModelCore := seriesmodel.NewCore(seriesmodeldb.NewStore(cfg.DB))
 	// vehicleModelCore := vehiclemodel.NewCore(vehiclemodeldb.NewStore(cfg.DB))
 	auctionHouseCore := auctionhouse.NewCore(auctionhousedb.NewStore(cfg.DB))
 
@@ -72,6 +76,14 @@ func (add) Add(app *web.App, cfg mux.Config) {
 		Sess:        cfg.Sess,
 		Auth:        authCore,
 		BrandSeries: brandSeriesCore,
+	})
+
+	seriesmodelapi.Routes(app, seriesmodelapi.Config{
+		Log:         cfg.Log,
+		TxM:         cfg.TxM,
+		Sess:        cfg.Sess,
+		Auth:        authCore,
+		SeriesModel: seriesModelCore,
 	})
 
 	// vehiclemodelapi.Routes(app, vehiclemodelapi.Config{

@@ -1,0 +1,50 @@
+@baseUrl = http://localhost:3000/v1
+@pattern = series-models
+
+### AUTH: Get
+GET {{baseUrl}}/{{pattern}}
+
+### AUTH: Get by id
+GET {{baseUrl}}/{{pattern}}/7
+
+### ADMIN: Create
+POST {{baseUrl}}/{{pattern}}
+
+{
+  "name":"330",
+  "version":"sport line",
+  "modelYear":2024,
+  "bodyStyle":"sedan",
+  "driveType":"rwd",
+  "fuelType":"gasoline",
+  "engineType":"inline",
+  "engineDisplacement":2000,
+  "valveCount":4,
+  "hasTurbo":true,
+  "transmissionType":"automatic",
+  "horsePower":230,
+  "seriesId":1
+}
+
+### ADMIN: Update
+
+PUT {{baseUrl}}/{{pattern}}/7
+
+{
+  "name":"320d",
+  "version":"luxury line",
+  "modelYear":2023,
+  "bodyStyle":"wagon",
+  "driveType":"awd",
+  "fuelType":"diesel",
+  "engineType":"inline",
+  "engineDisplacement":1800,
+  "valveCount":4,
+  "hasTurbo":true,
+  "transmissionType":"unspecified",
+  "horsePower":160,
+  "seriesId":1
+}
+
+### ADMIN: Delete
+DELETE {{baseUrl}}/{{pattern}}/3
