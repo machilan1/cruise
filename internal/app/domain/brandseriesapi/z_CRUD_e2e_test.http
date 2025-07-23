@@ -26,4 +26,4 @@ PUT {{baseUrl}}/{{pattern}}/1
 
 
 ### ADMIN: Delete
-DELETE {{baseUrl}}/{{pattern}}/1
+DELETE {{baseUrl}}/{{pattern}}/1 
