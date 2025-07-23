@@ -3,41 +3,32 @@ package listedvehicle
 import "time"
 
 type ListedVehicle struct {
-	ID                 int
-	ManufacturedAt     time.Time
-	LicensedAt         *time.Time
-	Brand              ListedVehicleBrand
-	Model              ListedVehicleModel
-	DoorCount          int
-	KeyCount           int
-	Color              string
-	FuelType           FuelType
-	BodySerial         *string
-	TransmissionType   *TransmissionType
-	HeadlightType      *HeadlightType
-	WheelSide          WheelSideType
-	EngineDisplacement *int
-	ValvesCount        *int
-	EngineSerial       *string
-	EngineType         *EngineType
-	HasTurbo           *bool
-	BodyModified       bool
-	VehicleSource      *VehicleSourceType
-	SpecialIncident    *SpecialIncidentType
-	Note               string
-	CreatedAt          time.Time
-	UpdatedAt          time.Time
-	DeletedAt          *time.Time
-}
-
-type ListedVehicleBrand struct {
-	ID        int
-	Name      string
-	LogoImage *string
+	ID               int
+	ManufacturedAt   time.Time
+	LicensedAt       *time.Time
+	Model            ListedVehicleModel
+	DoorCount        int
+	KeyCount         int
+	Color            string
+	BodySerial       string
+	TransmissionType TransmissionType
+	HeadlightType    HeadlightType
+	WheelSide        WheelSideType
+	EngineSerial     string
+	BodyModified     bool
+	VehicleSource    VehicleSourceType
+	SpecialIncident  SpecialIncidentType
+	Note             string
+	CreatedAt        time.Time
+	UpdatedAt        time.Time
+	DeletedAt        *time.Time
 }
 
 type ListedVehicleModel struct {
 	ID               int
+	BrandID          int
+	BrandName        string
+	BrandLogoImage   string
 	SeriesName       string
 	CommercialName   string
 	ModelYear        int
@@ -50,47 +41,37 @@ type ListedVehicleModel struct {
 }
 
 type NewListedVehicle struct {
-	ManufacturedAt     *time.Time
-	LicensedAt         *time.Time
-	ModelID            int
-	DoorCount          int
-	KeyCount           int
-	Color              string
-	FuelType           FuelType
-	BodySerial         *string
-	TransmissionType   *TransmissionType
-	HeadlightType      *HeadlightType
-	WheelSide          WheelSideType
-	EngineDisplacement *int
-	ValvesCount        *int
-	EngineSerial       *string
-	EngineType         *EngineType
-	HasTurbo           *bool
-	BodyModified       bool
-	VehicleSource      *VehicleSourceType
-	SpecialIncident    *SpecialIncidentType
-	Note               string
+	ManufacturedAt   time.Time
+	LicensedAt       *time.Time
+	ModelID          int
+	DoorCount        int
+	KeyCount         int
+	Color            string
+	BodySerial       string
+	TransmissionType TransmissionType
+	HeadlightType    HeadlightType
+	WheelSide        WheelSideType
+	EngineSerial     string
+	BodyModified     bool
+	VehicleSource    VehicleSourceType
+	SpecialIncident  SpecialIncidentType
+	Note             string
 }
 
 type UpdateListedVehicle struct {
-	ManufacturedAt     *time.Time
-	LicensedAt         *time.Time
-	ModelID            *int
-	DoorCount          *int
-	KeyCount           *int
-	Color              *string
-	FuelType           *FuelType
-	BodySerial         *string
-	TransmissionType   *TransmissionType
-	HeadlightType      *HeadlightType
-	WheelSide          *WheelSideType
-	EngineDisplacement *int
-	ValvesCount        *int
-	EngineSerial       *string
-	EngineType         *EngineType
-	HasTurbo           *bool
-	BodyModified       *bool
-	VehicleSource      *VehicleSourceType
-	SpecialIncident    *SpecialIncidentType
-	Note               *string
+	ManufacturedAt   *time.Time
+	LicensedAt       *time.Time
+	ModelID          *int
+	DoorCount        *int
+	KeyCount         *int
+	Color            *string
+	BodySerial       *string
+	TransmissionType *TransmissionType
+	HeadlightType    *HeadlightType
+	WheelSide        *WheelSideType
+	EngineSerial     *string
+	BodyModified     *bool
+	VehicleSource    *VehicleSourceType
+	SpecialIncident  *SpecialIncidentType
+	Note             *string
 }

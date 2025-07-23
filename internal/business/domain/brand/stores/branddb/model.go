@@ -19,6 +19,8 @@ func toCoreBrand(dbb dbBrand) brand.Brand {
 		ID:        dbb.ID,
 		Name:      dbb.Name,
 		LogoImage: dbb.LogoImage,
+		CreatedAt: dbb.CreatedAt,
+		UpdatedAt: dbb.UpdatedAt,
 	}
 }
 
@@ -35,5 +37,7 @@ func toDBBrand(brd brand.Brand) dbBrand {
 		ID:        brd.ID,
 		Name:      brd.Name,
 		LogoImage: brd.LogoImage,
+		CreatedAt: brd.CreatedAt,
+		UpdatedAt: brd.UpdatedAt,
 	}
 }

@@ -1,4 +1,4 @@
-package brandapi
+package brandseriesapi
 
 import (
 	"context"
@@ -7,42 +7,42 @@ import (
 	"net/http"
 
 	"github.com/machilan1/cruise/internal/app/sdk/errs"
-	"github.com/machilan1/cruise/internal/business/domain/brand"
+	"github.com/machilan1/cruise/internal/business/domain/brandseries"
 	"github.com/machilan1/cruise/internal/business/sdk/tran"
 	"github.com/machilan1/cruise/internal/framework/logger"
 	"github.com/machilan1/cruise/internal/framework/web"
 )
 
 var (
-	ErrInvalidID = errs.NewTrustedError(fmt.Errorf("invalid brand id"), http.StatusBadRequest)
-	ErrNotFound  = errs.NewTrustedError(fmt.Errorf("brand not found"), http.StatusNotFound)
-	ErrConflict  = errs.NewTrustedError(fmt.Errorf("request data conflict with current data"), http.StatusConflict)
+	ErrConflict  = errs.NewTrustedError(fmt.Errorf("input data conflicts with existing data"), http.StatusConflict)
+	ErrNotFound  = errs.NewTrustedError(fmt.Errorf("brand series not found"), http.StatusNotFound)
+	ErrInvalidID = errs.NewTrustedError(fmt.Errorf("invalid brand series id"), http.StatusBadRequest)
 )
 
 type handlers struct {
-	log   *logger.Logger
-	txM   tran.TxManager
-	brand *brand.Core
+	log         *logger.Logger
+	txM         tran.TxManager
+	brandSeries *brandseries.Core
 }
 
-func newHandlers(log *logger.Logger, txM tran.TxManager, brand *brand.Core) *handlers {
+func newHandlers(log *logger.Logger, txM tran.TxManager, brandSeries *brandseries.Core) *handlers {
 	return &handlers{
-		log:   log,
-		txM:   txM,
-		brand: brand,
+		log:         log,
+		txM:         txM,
+		brandSeries: brandSeries,
 	}
 }
 
 func (h *handlers) newWithTx(txM tran.TxManager) (*handlers, error) {
-	fl, err := h.brand.NewWithTx(txM)
+	fl, err := h.brandSeries.NewWithTx(txM)
 	if err != nil {
 		return nil, err
 	}
 
 	return &handlers{
-		log:   h.log,
-		txM:   txM,
-		brand: fl,
+		log:         h.log,
+		txM:         txM,
+		brandSeries: fl,
 	}, nil
 }
 
@@ -54,71 +54,64 @@ func (h *handlers) query(ctx context.Context, w http.ResponseWriter, r *http.Req
 		return errs.NewTrustedError(err, http.StatusBadRequest)
 	}
 
-	brds, err := h.brand.Query(ctx, qf)
+	bs, err := h.brandSeries.Query(ctx, qf)
 	if err != nil {
 		return fmt.Errorf("query: %w", err)
 	}
 
-	return web.Respond(ctx, w, toAppBrands(brds), http.StatusOK)
+	return web.Respond(ctx, w, toAppBrandSerieses(bs), http.StatusOK)
 }
 
 func (h *handlers) queryByID(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	b, err := getBrand(ctx)
+	bs, err := getBrandSeries(ctx)
 	if err != nil {
 		return err
 	}
 
-	return web.Respond(ctx, w, toAppBrand(b), http.StatusOK)
+	return web.Respond(ctx, w, toAppBrandSeries(bs), http.StatusOK)
 }
 
 func (h *handlers) create(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	var anbrd AppNewBrand
-	if err := web.Decode(r, &anbrd); err != nil {
+	var anbs AppNewBrandSeries
+	if err := web.Decode(r, &anbs); err != nil {
 		return errs.NewTrustedError(err, http.StatusBadRequest)
 	}
 
-	var brd brand.Brand
+	var bs brandseries.BrandSeries
 	if err := h.txM.RunTx(ctx, func(txM tran.TxManager) error {
 		h, err := h.newWithTx(txM)
 		if err != nil {
 			return err
 		}
 
-		brd, err = h.brand.Create(ctx, toCoreNewBrand(anbrd))
+		nbs, err := toCoreNewBrandSeries(anbs)
 		if err != nil {
-			return fmt.Errorf("create: anbrd[%+v]: %w", anbrd, err)
+			return err
 		}
 
-		brd, err = h.brand.QueryByID(ctx, brd.ID)
+		bs, err = h.brandSeries.Create(ctx, nbs)
 		if err != nil {
-			return fmt.Errorf("querybyid: %w", err)
+			return fmt.Errorf("create: %w", err)
 		}
+
 		return nil
 	}); err != nil {
-		if errors.Is(err, brand.ErrConflict) {
-			return ErrConflict
-		}
-
-		if errors.Is(err, brand.ErrNotFound) {
-			return ErrNotFound
-		}
-
-		if errors.Is(err, brand.ErrDuplicatedBrandName) {
+		if errors.Is(err, brandseries.ErrConflict) {
 			return ErrConflict
 		}
 		return err
 	}
-	return web.Respond(ctx, w, toAppBrand(brd), http.StatusCreated)
+	return web.Respond(ctx, w, toAppBrandSeries(bs), http.StatusCreated)
 }
 
 func (h *handlers) update(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	brd, err := getBrand(ctx)
+	bs, err := getBrandSeries(ctx)
 	if err != nil {
 		return err
 	}
 
-	var aubrd AppUpdateBrand
-	if err := web.Decode(r, &aubrd); err != nil {
+	var aubs AppUpdateBrandSeries
+	if err := web.Decode(r, &aubs); err != nil {
 		return errs.NewTrustedError(err, http.StatusBadRequest)
 	}
 
@@ -128,36 +121,33 @@ func (h *handlers) update(ctx context.Context, w http.ResponseWriter, r *http.Re
 			return err
 		}
 
-		brd, err = h.brand.Update(ctx, brd, toCoreUpdateBrand(aubrd))
+		ubs, err := toCoreUpdateBrandSeries(aubs)
+		if err != nil {
+			return err
+		}
+
+		bs, err = h.brandSeries.Update(ctx, ubs, bs)
 		if err != nil {
 			return fmt.Errorf("update: %w", err)
 		}
 
-		brd, err = h.brand.QueryByID(ctx, brd.ID)
-		if err != nil {
-			return fmt.Errorf("querybyid: %w", err)
-		}
 		return nil
 	}); err != nil {
-		if errors.Is(err, brand.ErrNotFound) {
+		if errors.Is(err, brandseries.ErrNotFound) {
 			return ErrNotFound
 		}
-
-		if errors.Is(err, brand.ErrConflict) {
-			return ErrConflict
-		}
-
-		if errors.Is(err, brand.ErrDuplicatedBrandName) {
+		if errors.Is(err, brandseries.ErrConflict) {
 			return ErrConflict
 		}
 
 		return err
 	}
-	return web.Respond(ctx, w, toAppBrand(brd), http.StatusOK)
+
+	return web.Respond(ctx, w, toAppBrandSeries(bs), http.StatusOK)
 }
 
 func (h *handlers) delete(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	brd, err := getBrand(ctx)
+	bs, err := getBrandSeries(ctx)
 	if err != nil {
 		return err
 	}
@@ -168,21 +158,17 @@ func (h *handlers) delete(ctx context.Context, w http.ResponseWriter, r *http.Re
 			return err
 		}
 
-		if err = h.brand.Delete(ctx, brd.ID); err != nil {
+		if err := h.brandSeries.Delete(ctx, bs.ID); err != nil {
 			return fmt.Errorf("delete: %w", err)
 		}
-
 		return nil
 	}); err != nil {
-		if errors.Is(err, brand.ErrNotFound) {
+		if errors.Is(err, brandseries.ErrNotFound) {
 			return ErrNotFound
-		}
-
-		if errors.Is(err, brand.ErrConflict) {
-			return ErrConflict
 		}
 
 		return err
 	}
+
 	return web.Respond(ctx, w, nil, http.StatusNoContent)
 }

@@ -3,11 +3,11 @@ package listedvehicle
 type FuelType string
 
 const (
-	FuelTypeGasoline FuelType = "gasoline"
-	FuelTypeDiesel   FuelType = "diesel"
-	FuelTypeElectric FuelType = "electric"
-	FuelTypeGas      FuelType = "gas"
-	FuelTypeOthers   FuelType = "others"
+	FuelTypeGasoline    FuelType = "gasoline"
+	FuelTypeDiesel      FuelType = "diesel"
+	FuelTypeElectric    FuelType = "electric"
+	FuelTypeGas         FuelType = "gas"
+	FuelTypeUnspecified FuelType = "unspecified"
 )
 
 func ParseFuelType(ft string) (FuelType, error) {
@@ -20,8 +20,8 @@ func ParseFuelType(ft string) (FuelType, error) {
 		return FuelTypeElectric, nil
 	case string(FuelTypeGas):
 		return FuelTypeGas, nil
-	case string(FuelTypeOthers):
-		return FuelTypeOthers, nil
+	case string(FuelTypeUnspecified):
+		return FuelTypeUnspecified, nil
 	default:
 		return "", ErrInvalidFuelType
 	}
@@ -30,8 +30,9 @@ func ParseFuelType(ft string) (FuelType, error) {
 type TransmissionType string
 
 const (
-	TransmissionTypeAuto   TransmissionType = "automatic"
-	TransmissionTypeManual TransmissionType = "manual"
+	TransmissionTypeAuto        TransmissionType = "automatic"
+	TransmissionTypeManual      TransmissionType = "manual"
+	TransmissionTypeUnspecified TransmissionType = "unspecified"
 )
 
 func ParseTransmissionType(tm string) (TransmissionType, error) {
@@ -40,6 +41,8 @@ func ParseTransmissionType(tm string) (TransmissionType, error) {
 		return TransmissionTypeAuto, nil
 	case string(TransmissionTypeManual):
 		return TransmissionTypeManual, nil
+	case string(TransmissionTypeUnspecified):
+		return TransmissionTypeUnspecified, nil
 	default:
 		return "", ErrInvalidTransmissionType
 	}
@@ -48,11 +51,11 @@ func ParseTransmissionType(tm string) (TransmissionType, error) {
 type EngineType string
 
 const (
-	EngineTypeV      EngineType = "v"
-	EngineTypeInline EngineType = "inline"
-	EngineTypeBoxer  EngineType = "boxer"
-	EngineTypeRotary EngineType = "rotary"
-	EngineTypeOthers EngineType = "others"
+	EngineTypeV           EngineType = "v"
+	EngineTypeInline      EngineType = "inline"
+	EngineTypeBoxer       EngineType = "boxer"
+	EngineTypeRotary      EngineType = "rotary"
+	EngineTypeUnspecified EngineType = "unspecified"
 )
 
 func ParseEngineType(et string) (EngineType, error) {
@@ -65,8 +68,8 @@ func ParseEngineType(et string) (EngineType, error) {
 		return EngineTypeBoxer, nil
 	case string(EngineTypeRotary):
 		return EngineTypeRotary, nil
-	case string(EngineTypeOthers):
-		return EngineTypeOthers, nil
+	case string(EngineTypeUnspecified):
+		return EngineTypeUnspecified, nil
 	default:
 		return "", ErrInvalidEngineType
 	}
@@ -75,10 +78,10 @@ func ParseEngineType(et string) (EngineType, error) {
 type HeadlightType string
 
 const (
-	HeadlightTypeHID      HeadlightType = "hid"
-	HeadlightTypeLED      HeadlightType = "led"
-	HeadlightTypeTungsten HeadlightType = "tungsten"
-	HeadlightTypeOthers   HeadlightType = "others"
+	HeadlightTypeHID         HeadlightType = "hid"
+	HeadlightTypeLED         HeadlightType = "led"
+	HeadlightTypeTungsten    HeadlightType = "tungsten"
+	HeadlightTypeUnspecified HeadlightType = "unspecified"
 )
 
 func ParseHeadlightType(et string) (HeadlightType, error) {
@@ -89,8 +92,8 @@ func ParseHeadlightType(et string) (HeadlightType, error) {
 		return HeadlightTypeLED, nil
 	case string(HeadlightTypeTungsten):
 		return HeadlightTypeTungsten, nil
-	case string(HeadlightTypeOthers):
-		return HeadlightTypeOthers, nil
+	case string(HeadlightTypeUnspecified):
+		return HeadlightTypeUnspecified, nil
 	default:
 		return "", ErrInvalidHeadlightType
 	}
@@ -99,9 +102,9 @@ func ParseHeadlightType(et string) (HeadlightType, error) {
 type WheelSideType string
 
 const (
-	WheelSideTypeLeft   WheelSideType = "left"
-	WheelSideTypeRight  WheelSideType = "right"
-	WheelSideTypeOthers WheelSideType = "others"
+	WheelSideTypeLeft        WheelSideType = "left"
+	WheelSideTypeRight       WheelSideType = "right"
+	WheelSideTypeUnspecified WheelSideType = "unspecified"
 )
 
 func ParseWheelSideType(et string) (WheelSideType, error) {
@@ -110,8 +113,8 @@ func ParseWheelSideType(et string) (WheelSideType, error) {
 		return WheelSideTypeLeft, nil
 	case string(WheelSideTypeRight):
 		return WheelSideTypeRight, nil
-	case string(WheelSideTypeOthers):
-		return WheelSideTypeOthers, nil
+	case string(WheelSideTypeUnspecified):
+		return WheelSideTypeUnspecified, nil
 	default:
 		return "", ErrInvalidWheelSideType
 	}
@@ -120,10 +123,10 @@ func ParseWheelSideType(et string) (WheelSideType, error) {
 type VehicleSourceType string
 
 const (
-	VehicleSourceTypeJudicial   VehicleSourceType = "judicial"
-	VehicleSourceTypeCommission VehicleSourceType = "commission"
-	VehicleSourceTypeOverseas   VehicleSourceType = "overseas"
-	VehicleSourceTypeUnknown    VehicleSourceType = "unknown"
+	VehicleSourceTypeJudicial    VehicleSourceType = "judicial"
+	VehicleSourceTypeCommission  VehicleSourceType = "commission"
+	VehicleSourceTypeOverseas    VehicleSourceType = "overseas"
+	VehicleSourceTypeUnspecified VehicleSourceType = "unspecified"
 )
 
 func ParseVehicleSourceType(et string) (VehicleSourceType, error) {
@@ -134,8 +137,8 @@ func ParseVehicleSourceType(et string) (VehicleSourceType, error) {
 		return VehicleSourceTypeCommission, nil
 	case string(VehicleSourceTypeOverseas):
 		return VehicleSourceTypeOverseas, nil
-	case string(VehicleSourceTypeUnknown):
-		return VehicleSourceTypeUnknown, nil
+	case string(VehicleSourceTypeUnspecified):
+		return VehicleSourceTypeUnspecified, nil
 	default:
 		return "", ErrInvalidVehicleSourceType
 	}
@@ -144,9 +147,10 @@ func ParseVehicleSourceType(et string) (VehicleSourceType, error) {
 type SpecialIncidentType string
 
 const (
-	SpecialIncidentTypeCasualty SpecialIncidentType = "casualty"
-	SpecialIncidentTypeSuicide  SpecialIncidentType = "suicide"
-	SpecialIncidentTypeWatered  SpecialIncidentType = "watered"
+	SpecialIncidentTypeCasualty    SpecialIncidentType = "casualty"
+	SpecialIncidentTypeSuicide     SpecialIncidentType = "suicide"
+	SpecialIncidentTypeWatered     SpecialIncidentType = "watered"
+	SpecialIncidentTypeUnspecified SpecialIncidentType = "unspecified"
 )
 
 func ParseSpecialIncidentType(et string) (SpecialIncidentType, error) {
@@ -157,6 +161,8 @@ func ParseSpecialIncidentType(et string) (SpecialIncidentType, error) {
 		return SpecialIncidentTypeSuicide, nil
 	case string(SpecialIncidentTypeWatered):
 		return SpecialIncidentTypeWatered, nil
+	case string(SpecialIncidentTypeUnspecified):
+		return SpecialIncidentTypeWatered, nil
 	default:
 		return "", ErrInvalidSpecialIncidentType
 	}
@@ -165,15 +171,15 @@ func ParseSpecialIncidentType(et string) (SpecialIncidentType, error) {
 type BodyStyle string
 
 const (
-	BodyStyleSedan     BodyStyle = "sedan"
-	BodyStyleWagon     BodyStyle = "wagon"
-	BodyStyleHatchback BodyStyle = "hatchback"
-	BodyStyleGt        BodyStyle = "gt"
-	BodyStyleSports    BodyStyle = "sports"
-	BodyStyleVan       BodyStyle = "van"
-	BodyStyleTruck     BodyStyle = "truck"
-	BodyStyleSuv       BodyStyle = "suv"
-	BodyStyleOthers    BodyStyle = "others"
+	BodyStyleSedan       BodyStyle = "sedan"
+	BodyStyleWagon       BodyStyle = "wagon"
+	BodyStyleHatchback   BodyStyle = "hatchback"
+	BodyStyleGt          BodyStyle = "gt"
+	BodyStyleSports      BodyStyle = "sports"
+	BodyStyleVan         BodyStyle = "van"
+	BodyStyleTruck       BodyStyle = "truck"
+	BodyStyleSuv         BodyStyle = "suv"
+	BodyStyleUnspecified BodyStyle = "unspecified"
 )
 
 func ParseBodyStyle(bs string) (BodyStyle, error) {
@@ -194,8 +200,8 @@ func ParseBodyStyle(bs string) (BodyStyle, error) {
 		return BodyStyleTruck, nil
 	case string(BodyStyleSuv):
 		return BodyStyleSuv, nil
-	case string(BodyStyleOthers):
-		return BodyStyleOthers, nil
+	case string(BodyStyleUnspecified):
+		return BodyStyleUnspecified, nil
 	default:
 		return "", ErrInvalidBodyStyle
 	}
@@ -204,11 +210,11 @@ func ParseBodyStyle(bs string) (BodyStyle, error) {
 type DriveType string
 
 const (
-	DriveTypeFWD    DriveType = "fwd"
-	DriveTypeRWD    DriveType = "rwd"
-	DriveTypeAWD    DriveType = "awd"
-	DriveType4WD    DriveType = "4wd"
-	DriveTypeOthers DriveType = "others"
+	DriveTypeFWD         DriveType = "fwd"
+	DriveTypeRWD         DriveType = "rwd"
+	DriveTypeAWD         DriveType = "awd"
+	DriveType4WD         DriveType = "4wd"
+	DriveTypeUnspecified DriveType = "unspecified"
 )
 
 func ParseDriveType(d string) (DriveType, error) {
@@ -221,8 +227,8 @@ func ParseDriveType(d string) (DriveType, error) {
 		return DriveTypeAWD, nil
 	case string(DriveType4WD):
 		return DriveType4WD, nil
-	case string(DriveTypeOthers):
-		return DriveTypeOthers, nil
+	case string(DriveTypeUnspecified):
+		return DriveTypeUnspecified, nil
 	default:
 		return "", ErrInvalidDriveType
 	}

@@ -10,9 +10,9 @@ import (
 )
 
 var (
-	ErrNotFound           = errors.New("brand not found")
-	ErrConflict           = errors.New("request data conflicts with existing data")
-	ErrDuplicatedDishName = errors.New("duplicated brand name")
+	ErrNotFound            = errors.New("brand not found")
+	ErrConflict            = errors.New("request data conflicts with existing data")
+	ErrDuplicatedBrandName = errors.New("duplicated brand name")
 )
 
 type Storer interface {

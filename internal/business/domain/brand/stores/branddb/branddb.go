@@ -39,7 +39,7 @@ func (s *Store) Query(ctx context.Context, filter brand.QueryFilter) ([]brand.Br
 		SELECT 
 			brand_id,
 			brand_name,
-			logo,
+			(SELECT path FROM files WHERE file_id = image_id) as logo_image,
 			created_at,
 			updated_at
 		FROM brands
@@ -65,7 +65,7 @@ func (s *Store) QueryByID(ctx context.Context, id int) (brand.Brand, error) {
 		SELECT 
 			brand_id,
 			brand_name,
-			logo,
+			(SELECT path FROM files WHERE file_id = image_id) as logo_image,
 			created_at,
 			updated_at
 		FROM brands
@@ -90,12 +90,12 @@ func (s *Store) Create(ctx context.Context, brd brand.Brand) (brand.Brand, error
 		INSERT INTO brands
 			(
 				brand_name,
-				logo,
+				image_id,
 				created_at,
 				updated_at
 			)VALUES(	
 				:brand_name,
-				:logo,
+				(SELECT file_id FROM files WHERE path = :logo_image),
 				:created_at,
 				:updated_at	
 			)
@@ -105,6 +105,10 @@ func (s *Store) Create(ctx context.Context, brd brand.Brand) (brand.Brand, error
 	if err := sqldb.NamedQueryStruct(ctx, s.db, q, dbbrd, &dbbrd); err != nil {
 		if errors.Is(err, sqldb.ErrDBIntegrity) {
 			return brand.Brand{}, brand.ErrConflict
+		}
+
+		if errors.Is(err, sqldb.ErrDBDuplicatedEntry) {
+			return brand.Brand{}, brand.ErrDuplicatedBrandName
 		}
 		return brand.Brand{}, fmt.Errorf("namedquerystruct: %w", err)
 	}
@@ -116,7 +120,8 @@ func (s *Store) Update(ctx context.Context, brd brand.Brand) (brand.Brand, error
 	dbbrd := toDBBrand(brd)
 	const q = `
 		UPDATE brands
-		SET logo = :logo
+		SET image_id = (SELECT file_id FROM files WHERE path = :logo_image),
+			updated_at = :updated_at
 		WHERE brand_id = :brand_id
 		RETURNING brand_id
 	`
@@ -130,6 +135,9 @@ func (s *Store) Update(ctx context.Context, brd brand.Brand) (brand.Brand, error
 			return brand.Brand{}, brand.ErrConflict
 		}
 
+		if errors.Is(err, sqldb.ErrDBDuplicatedEntry) {
+			return brand.Brand{}, brand.ErrDuplicatedBrandName
+		}
 		return brand.Brand{}, fmt.Errorf("namedquerystruct: %w", err)
 	}
 

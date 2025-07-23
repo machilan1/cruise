@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:3000/v1
-@pattern = brands
+@pattern = brand-series
 
 ### AUTH: Get
 GET {{baseUrl}}/{{pattern}}
@@ -11,8 +11,8 @@ GET {{baseUrl}}/{{pattern}}/1
 POST {{baseUrl}}/{{pattern}}
 
 {
-  "name":"BMW",
-  "logoImage":"mockfile_1.jpg"
+  "name":"3-series",
+  "brandID":1
 }
 
 ### ADMIN: Update
@@ -20,7 +20,7 @@ POST {{baseUrl}}/{{pattern}}
 PUT {{baseUrl}}/{{pattern}}/1
 
 {
-  "logoImage":"mockfile_2.jpg"
+  "logo":"MockFile2.png"
 }
 
 ### ADMIN: Delete
