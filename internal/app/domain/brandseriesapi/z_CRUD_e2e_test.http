@@ -20,8 +20,10 @@ POST {{baseUrl}}/{{pattern}}
 PUT {{baseUrl}}/{{pattern}}/1
 
 {
-  "logo":"MockFile2.png"
+  "name":"3-series",
+  "brandID":1
 }
+
 
 ### ADMIN: Delete
 DELETE {{baseUrl}}/{{pattern}}/1

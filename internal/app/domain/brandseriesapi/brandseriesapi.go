@@ -99,6 +99,7 @@ func (h *handlers) create(ctx context.Context, w http.ResponseWriter, r *http.Re
 		if errors.Is(err, brandseries.ErrConflict) {
 			return ErrConflict
 		}
+
 		return err
 	}
 	return web.Respond(ctx, w, toAppBrandSeries(bs), http.StatusCreated)

@@ -41,7 +41,7 @@ func (s *Store) Query(ctx context.Context, filter brandseries.QueryFilter) ([]br
 			json_build_object(
 				'brand_id',		b.brand_id,
 				'brand_name',	b.brand_name,
-				'logo_image',	b.logo_image
+				'logo_image',	(SELECT path FROM files WHERE file_id = b.image_id)
 			) as brand,
 			bs.created_at,
 			bs.updated_at
@@ -73,7 +73,7 @@ func (s *Store) QueryByID(ctx context.Context, bsID int) (brandseries.BrandSerie
 			json_build_object(
 				'brand_id',		b.brand_id,
 				'brand_name',	b.brand_name,
-				'logo_image',	b.logo_image
+				'logo_image',	(SELECT path FROM files WHERE file_id = b.image_id)
 			) as brand,
 			bs.created_at,
 			bs.updated_at
@@ -108,6 +108,7 @@ func (s *Store) Create(ctx context.Context, bs brandseries.BrandSeries) (brandse
 			:created_at,
 			:updated_at
 		)
+			RETURNING brand_series_id
 	`
 
 	if err := sqldb.NamedQueryStruct(ctx, s.db, q, dbs, &dbs); err != nil {
@@ -120,7 +121,7 @@ func (s *Store) Create(ctx context.Context, bs brandseries.BrandSeries) (brandse
 		return brandseries.BrandSeries{}, fmt.Errorf("namedquerystruct: %w", err)
 	}
 
-	bs, err := s.QueryByID(ctx, bs.ID)
+	bs, err := s.QueryByID(ctx, dbs.ID)
 	if err != nil {
 		return brandseries.BrandSeries{}, fmt.Errorf("querybyid: %w", err)
 	}
@@ -136,6 +137,7 @@ func (s *Store) Update(ctx context.Context, bs brandseries.BrandSeries) (brandse
 		SET brand_series_name = :brand_series_name,
 			brand_id = :brand_id
 		WHERE brand_series_id = :brand_series_id
+		RETURNING brand_series_id
 	`
 
 	if err := sqldb.NamedQueryStruct(ctx, s.db, q, dbs, &dbs); err != nil {

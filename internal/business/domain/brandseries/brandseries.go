@@ -74,7 +74,7 @@ func (c *Core) Create(ctx context.Context, nbs NewBrandSeries) (BrandSeries, err
 
 	bs, err := c.storer.Create(ctx, bs)
 	if err != nil {
-		return BrandSeries{}, fmt.Errorf("create")
+		return BrandSeries{}, fmt.Errorf("create: %w", err)
 	}
 
 	return bs, nil
