@@ -164,7 +164,6 @@ func (h *handlers) Archive(ctx context.Context, w http.ResponseWriter, r *http.R
 		}
 
 		return nil
-
 	}); err != nil {
 		if errors.Is(err, auctionhouse.ErrNotFound) {
 			return ErrNotFound

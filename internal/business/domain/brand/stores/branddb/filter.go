@@ -7,7 +7,6 @@ import (
 )
 
 func applyFilter(filter brand.QueryFilter, data map[string]any, sb *strings.Builder) {
-
 	var wc []string
 
 	if len(wc) > 0 {

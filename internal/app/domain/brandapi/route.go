@@ -45,5 +45,4 @@ func Routes(app *web.App, cfg Config) {
 	authIsOneofAdmin.HandleFunc(http.MethodPost, version, "/brands", hdl.create)
 	authIsOneofAdmin.HandleFunc(http.MethodPut, version, "/brands/{brandID}", hdl.update, brdCtx)
 	authIsOneofAdmin.HandleFunc(http.MethodDelete, version, "/brands/{brandID}", hdl.delete, brdCtx)
-
 }

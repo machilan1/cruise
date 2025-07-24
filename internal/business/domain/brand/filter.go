@@ -1,4 +1,3 @@
 package brand
 
-type QueryFilter struct {
-}
+type QueryFilter struct{}

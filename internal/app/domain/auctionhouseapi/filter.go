@@ -34,5 +34,4 @@ func parseQueryFilter(qp QueryParams) (auctionhouse.QueryFilter, error) {
 	}
 
 	return filter, nil
-
 }

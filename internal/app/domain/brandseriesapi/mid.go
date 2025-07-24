@@ -48,6 +48,7 @@ func brandSeriesCtx(bs brandseries.Core) web.MidFunc {
 func setBrandSeries(ctx context.Context, bs brandseries.BrandSeries) context.Context {
 	return context.WithValue(ctx, brandSeriesKey, bs)
 }
+
 func getBrandSeries(ctx context.Context) (brandseries.BrandSeries, error) {
 	dsh, ok := ctx.Value(brandSeriesKey).(brandseries.BrandSeries)
 	if !ok {

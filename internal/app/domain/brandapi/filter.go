@@ -6,8 +6,7 @@ import (
 	"github.com/machilan1/cruise/internal/business/domain/brand"
 )
 
-type QueryParams struct {
-}
+type QueryParams struct{}
 
 func parseQueryParams(r *http.Request) QueryParams {
 	// values := r.URL.Query()
@@ -17,6 +16,5 @@ func parseQueryParams(r *http.Request) QueryParams {
 }
 
 func parseQueryFilter(qp QueryParams) (brand.QueryFilter, error) {
-
 	return brand.QueryFilter{}, nil
 }

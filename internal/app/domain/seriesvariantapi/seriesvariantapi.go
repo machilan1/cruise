@@ -31,7 +31,6 @@ type handlers struct {
 }
 
 func newHandlers(log *logger.Logger, txM tran.TxManager, seriesModel *seriesvariant.Core) *handlers {
-
 	return &handlers{
 		log:           log,
 		txM:           txM,
@@ -101,7 +100,6 @@ func (h *handlers) create(ctx context.Context, w http.ResponseWriter, r *http.Re
 		}
 
 		return nil
-
 	}); err != nil {
 		if errors.Is(err, seriesvariant.ErrConflict) {
 			return ErrConflict
