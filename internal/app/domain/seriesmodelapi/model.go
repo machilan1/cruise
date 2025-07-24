@@ -135,14 +135,14 @@ type AppUpdateSeriesModel struct {
 	Name               *string `json:"name"`
 	Version            *string `json:"version"`
 	ModelYear          *int    `json:"modelYear"`
-	BodyStyle          *string `json:"bodyStyle" validate:"oneof=sedan wagon hatchback gt sports van truck suv convertible unspecified"`
-	DriveType          *string `json:"driveType" validate:"oneof=fwd rwd 4wd awd unspecified"`
-	FuelType           *string `json:"fuelType" validate:"oneof=diesel gasoline electric gas unspecified"`
-	EngineType         *string `json:"engineType" validate:"oneof=v inline boxer rotary unspecified"`
+	BodyStyle          *string `json:"bodyStyle" validate:"omitempty,oneof=sedan wagon hatchback gt sports van truck suv convertible unspecified"`
+	DriveType          *string `json:"driveType" validate:"omitempty,oneof=fwd rwd 4wd awd unspecified"`
+	FuelType           *string `json:"fuelType" validate:"omitempty,oneof=diesel gasoline electric gas unspecified"`
+	EngineType         *string `json:"engineType" validate:"omitempty,oneof=v inline boxer rotary unspecified"`
 	EngineDisplacement *int    `json:"engineDisplacement"`
 	ValveCount         *int    `json:"valveCount"`
 	HasTurbo           *bool   `json:"hasTurbo"`
-	TransmissionType   *string `json:"transmissionType" validate:"oneof=automatic manual unspecified"`
+	TransmissionType   *string `json:"transmissionType" validate:"omitempty,oneof=automatic manual unspecified"`
 	HorsePower         *int    `json:"horsePower"`
 	SeriesID           *int    `json:"seriesId"`
 }
