@@ -125,7 +125,7 @@ func (h *handlers) update(ctx context.Context, w http.ResponseWriter, r *http.Re
 
 	usm, err := toCoreUpdateSeriesModel(ausm)
 	if err != nil {
-		return err
+		return errs.NewTrustedError(err, http.StatusBadRequest)
 	}
 
 	if err := h.txM.RunTx(ctx, func(txM tran.TxManager) error {

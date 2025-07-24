@@ -33,7 +33,7 @@ func toAppBrands(brds []brand.Brand) []AppBrand {
 }
 
 type AppNewBrand struct {
-	Name      string  `json:"name"`
+	Name      string  `json:"name" validate:"require"`
 	LogoImage *string `json:"logoImage"`
 }
 

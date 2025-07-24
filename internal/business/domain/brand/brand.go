@@ -64,8 +64,8 @@ func (c *Core) QueryByID(ctx context.Context, id int) (Brand, error) {
 
 func (c *Core) Create(ctx context.Context, nb NewBrand) (Brand, error) {
 	now := time.Now()
-	logoImage := ""
 
+	var logoImage string
 	if nb.LogoImage != nil {
 		logoImage = *nb.LogoImage
 	}

@@ -43,8 +43,8 @@ type AppBrandSeriesBrand struct {
 }
 
 type AppNewBrandSeries struct {
-	Name    string `json:"name"`
-	BrandID int    `json:"brandId"`
+	Name    string `json:"name" validate:"require"`
+	BrandID int    `json:"brandId" validate:"require"`
 }
 
 func toCoreNewBrandSeries(anbs AppNewBrandSeries) (brandseries.NewBrandSeries, error) {

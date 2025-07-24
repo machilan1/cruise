@@ -164,7 +164,7 @@ func toCoreUpdateSeriesModel(ausm AppUpdateSeriesModel) (seriesvariant.UpdateSer
 	if ausm.BodyStyle != nil {
 		bs, err := seriesvariant.ParseBodyStyle(*ausm.BodyStyle)
 		if err != nil {
-			return seriesvariant.UpdateSeriesVariant{}, ErrInvalidBodyStyle
+			return seriesvariant.UpdateSeriesVariant{}, err
 		}
 		bodyStyle = &bs
 	}
@@ -172,7 +172,7 @@ func toCoreUpdateSeriesModel(ausm AppUpdateSeriesModel) (seriesvariant.UpdateSer
 	if ausm.DriveType != nil {
 		dt, err := seriesvariant.ParseDriveType(*ausm.DriveType)
 		if err != nil {
-			return seriesvariant.UpdateSeriesVariant{}, ErrInvalidDriveType
+			return seriesvariant.UpdateSeriesVariant{}, err
 		}
 		driveType = &dt
 	}
@@ -180,7 +180,7 @@ func toCoreUpdateSeriesModel(ausm AppUpdateSeriesModel) (seriesvariant.UpdateSer
 	if ausm.FuelType != nil {
 		ft, err := seriesvariant.ParseFuelType(*ausm.FuelType)
 		if err != nil {
-			return seriesvariant.UpdateSeriesVariant{}, ErrInvalidFuelType
+			return seriesvariant.UpdateSeriesVariant{}, err
 		}
 		fuelType = &ft
 	}
@@ -188,7 +188,7 @@ func toCoreUpdateSeriesModel(ausm AppUpdateSeriesModel) (seriesvariant.UpdateSer
 	if ausm.EngineType != nil {
 		et, err := seriesvariant.ParseEngineType(*ausm.EngineType)
 		if err != nil {
-			return seriesvariant.UpdateSeriesVariant{}, ErrInvalidEngineType
+			return seriesvariant.UpdateSeriesVariant{}, err
 		}
 		engineType = &et
 	}
@@ -196,7 +196,7 @@ func toCoreUpdateSeriesModel(ausm AppUpdateSeriesModel) (seriesvariant.UpdateSer
 	if ausm.TransmissionType != nil {
 		tt, err := seriesvariant.ParseTransmissionType(*ausm.TransmissionType)
 		if err != nil {
-			return seriesvariant.UpdateSeriesVariant{}, ErrInvalidTransmissionType
+			return seriesvariant.UpdateSeriesVariant{}, err
 		}
 		transmissionType = &tt
 	}
