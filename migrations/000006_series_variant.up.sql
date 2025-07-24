@@ -6,8 +6,8 @@ CREATE TYPE engine_types AS ENUM('v','inline','boxer','rotary','unspecified');
 
 
 CREATE TABLE IF NOT EXISTS series_variants(
-    series_variant_id         serial              PRIMARY KEY,
-    series_variant_name       text                NOT NULL CHECK(series_variant_name <> ''),
+    series_variant_id       serial              PRIMARY KEY,
+    series_variant_name     text                NOT NULL CHECK(series_variant_name <> ''),
     version                 text                NOT NULL DEFAULT '',
     model_year              int                 NOT NULL,
     body_style              body_styles         NOT NULL DEFAULT 'unspecified',
