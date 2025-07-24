@@ -1,6 +1,7 @@
 package all
 
 import (
+	"github.com/machilan1/cruise/internal/app/domain/auctionapi"
 	"github.com/machilan1/cruise/internal/app/domain/auctionhouseapi"
 	"github.com/machilan1/cruise/internal/app/domain/authapi"
 	"github.com/machilan1/cruise/internal/app/domain/brandapi"
@@ -9,6 +10,8 @@ import (
 	"github.com/machilan1/cruise/internal/app/domain/healthapi"
 	"github.com/machilan1/cruise/internal/app/domain/seriesvariantapi"
 	"github.com/machilan1/cruise/internal/app/sdk/mux"
+	"github.com/machilan1/cruise/internal/business/domain/auction"
+	"github.com/machilan1/cruise/internal/business/domain/auction/stores/auctiondb"
 	"github.com/machilan1/cruise/internal/business/domain/auctionhouse"
 	"github.com/machilan1/cruise/internal/business/domain/auctionhouse/stores/auctionhousedb"
 	"github.com/machilan1/cruise/internal/business/domain/auth"
@@ -40,6 +43,7 @@ func (add) Add(app *web.App, cfg mux.Config) {
 	seriesVariantCore := seriesvariant.NewCore(seriesvariantdb.NewStore(cfg.DB))
 	// vehicleModelCore := vehiclemodel.NewCore(vehiclemodeldb.NewStore(cfg.DB))
 	auctionHouseCore := auctionhouse.NewCore(auctionhousedb.NewStore(cfg.DB))
+	auctionCore := auction.NewCore(auctiondb.NewStore(cfg.DB))
 
 	healthapi.Routes(app, healthapi.Config{
 		Log: cfg.Log,
@@ -100,5 +104,13 @@ func (add) Add(app *web.App, cfg mux.Config) {
 		Sess:         cfg.Sess,
 		Auth:         authCore,
 		AuctionHouse: auctionHouseCore,
+	})
+
+	auctionapi.Routes(app, auctionapi.Config{
+		Log:     cfg.Log,
+		TxM:     cfg.TxM,
+		Sess:    cfg.Sess,
+		Auth:    authCore,
+		Auction: auctionCore,
 	})
 }

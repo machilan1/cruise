@@ -1,0 +1,27 @@
+@baseUrl = http://localhost:3000/v1
+@pattern = auctions
+
+### AUTH: Get
+GET {{baseUrl}}/{{pattern}}
+
+### AUTH: Get by id
+GET {{baseUrl}}/{{pattern}}/1
+
+### ADMIN: Create
+POST {{baseUrl}}/{{pattern}}
+
+{
+  "date":"2024-02-12T15:04:05Z"
+}
+
+### ADMIN: Update
+
+PATCH {{baseUrl}}/{{pattern}}/1
+
+{
+  "date":"2025-02-12T15:04:05Z",
+  "note":"hello"
+}
+
+### ADMIN: Delete
+DELETE {{baseUrl}}/{{pattern}}/1

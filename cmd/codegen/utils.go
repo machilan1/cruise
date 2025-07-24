@@ -21,16 +21,15 @@ const (
 	typeBool   = "bool"
 	typeTime   = "time.Time"
 
-	dbPrefix    = "admin_transaction"
-	dbTableName = "admin_transactions"
+	dbPrefix    = "auction"
+	dbTableName = "auctions"
 )
 
 func projectFieldsz() [][]string {
 	// directAppName, varType, dummyKey, dbPrefix, directJSONName, directDBName
 	data := [][]string{
-		{"Name", typeString, "", noDBPrefix, "", ""},
-		{"ExecutedCount", typeInt, "", noDBPrefix, "", ""},
-		{"NotExecutedCount", typeInt, "", noDBPrefix, "", ""},
+		{"Date", typeTime, "", noDBPrefix, "", ""},
+		{"Note", typeString, "", noDBPrefix, "", ""},
 	}
 	//data := [][]string{
 	//	{"PurchaseOrderID", typeInt, "", noDBPrefix, "", ""},
