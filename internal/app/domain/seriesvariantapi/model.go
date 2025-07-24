@@ -1,9 +1,9 @@
-package seriesmodelapi
+package seriesvariantapi
 
 import (
 	"time"
 
-	"github.com/machilan1/cruise/internal/business/domain/seriesmodel"
+	"github.com/machilan1/cruise/internal/business/domain/seriesvariant"
 	"github.com/machilan1/cruise/internal/framework/validate"
 )
 
@@ -34,7 +34,7 @@ type AppSeriesModelSeries struct {
 	BrandLogoImage string `json:"brandLogoImage"`
 }
 
-func toAppSeriesModel(sm seriesmodel.SeriesModel) AppSeriesModel {
+func toAppSeriesModel(sm seriesvariant.SeriesVariant) AppSeriesModel {
 	return AppSeriesModel{
 		ID:                 sm.ID,
 		Name:               sm.Name,
@@ -61,7 +61,7 @@ func toAppSeriesModel(sm seriesmodel.SeriesModel) AppSeriesModel {
 	}
 }
 
-func toAppSeriesModels(sms []seriesmodel.SeriesModel) []AppSeriesModel {
+func toAppSeriesModels(sms []seriesvariant.SeriesVariant) []AppSeriesModel {
 	asms := make([]AppSeriesModel, len(sms))
 	for i, v := range sms {
 		asms[i] = toAppSeriesModel(v)
@@ -92,29 +92,29 @@ func (app AppNewSeriesModel) Validate() error {
 	return nil
 }
 
-func toCoreNewSeriesModel(ansm AppNewSeriesModel) (seriesmodel.NewSeriesModel, error) {
-	bodyStyle, err := seriesmodel.ParseBodyStyle(ansm.BodyStyle)
+func toCoreNewSeriesModel(ansm AppNewSeriesModel) (seriesvariant.NewSeriesVariant, error) {
+	bodyStyle, err := seriesvariant.ParseBodyStyle(ansm.BodyStyle)
 	if err != nil {
-		return seriesmodel.NewSeriesModel{}, ErrInvalidBodyStyle
+		return seriesvariant.NewSeriesVariant{}, err
 	}
-	driveType, err := seriesmodel.ParseDriveType(ansm.DriveType)
+	driveType, err := seriesvariant.ParseDriveType(ansm.DriveType)
 	if err != nil {
-		return seriesmodel.NewSeriesModel{}, ErrInvalidDriveType
+		return seriesvariant.NewSeriesVariant{}, err
 	}
-	fuelType, err := seriesmodel.ParseFuelType(ansm.FuelType)
+	fuelType, err := seriesvariant.ParseFuelType(ansm.FuelType)
 	if err != nil {
-		return seriesmodel.NewSeriesModel{}, ErrInvalidFuelType
+		return seriesvariant.NewSeriesVariant{}, err
 	}
-	engineType, err := seriesmodel.ParseEngineType(ansm.EngineType)
+	engineType, err := seriesvariant.ParseEngineType(ansm.EngineType)
 	if err != nil {
-		return seriesmodel.NewSeriesModel{}, ErrInvalidEngineType
+		return seriesvariant.NewSeriesVariant{}, err
 	}
-	transmissionType, err := seriesmodel.ParseTransmissionType(ansm.TransmissionType)
+	transmissionType, err := seriesvariant.ParseTransmissionType(ansm.TransmissionType)
 	if err != nil {
-		return seriesmodel.NewSeriesModel{}, ErrInvalidTransmissionType
+		return seriesvariant.NewSeriesVariant{}, err
 	}
 
-	return seriesmodel.NewSeriesModel{
+	return seriesvariant.NewSeriesVariant{
 		Name:               ansm.Name,
 		Version:            ansm.Version,
 		ModelYear:          ansm.ModelYear,
@@ -154,54 +154,54 @@ func (app AppUpdateSeriesModel) Validate() error {
 	return nil
 }
 
-func toCoreUpdateSeriesModel(ausm AppUpdateSeriesModel) (seriesmodel.UpdateSeriesModel, error) {
-	var bodyStyle *seriesmodel.BodyStyle
-	var driveType *seriesmodel.DriveType
-	var fuelType *seriesmodel.FuelType
-	var engineType *seriesmodel.EngineType
-	var transmissionType *seriesmodel.TransmissionType
+func toCoreUpdateSeriesModel(ausm AppUpdateSeriesModel) (seriesvariant.UpdateSeriesVariant, error) {
+	var bodyStyle *seriesvariant.BodyStyle
+	var driveType *seriesvariant.DriveType
+	var fuelType *seriesvariant.FuelType
+	var engineType *seriesvariant.EngineType
+	var transmissionType *seriesvariant.TransmissionType
 
 	if ausm.BodyStyle != nil {
-		bs, err := seriesmodel.ParseBodyStyle(*ausm.BodyStyle)
+		bs, err := seriesvariant.ParseBodyStyle(*ausm.BodyStyle)
 		if err != nil {
-			return seriesmodel.UpdateSeriesModel{}, ErrInvalidBodyStyle
+			return seriesvariant.UpdateSeriesVariant{}, ErrInvalidBodyStyle
 		}
 		bodyStyle = &bs
 	}
 
 	if ausm.DriveType != nil {
-		dt, err := seriesmodel.ParseDriveType(*ausm.DriveType)
+		dt, err := seriesvariant.ParseDriveType(*ausm.DriveType)
 		if err != nil {
-			return seriesmodel.UpdateSeriesModel{}, ErrInvalidDriveType
+			return seriesvariant.UpdateSeriesVariant{}, ErrInvalidDriveType
 		}
 		driveType = &dt
 	}
 
 	if ausm.FuelType != nil {
-		ft, err := seriesmodel.ParseFuelType(*ausm.FuelType)
+		ft, err := seriesvariant.ParseFuelType(*ausm.FuelType)
 		if err != nil {
-			return seriesmodel.UpdateSeriesModel{}, ErrInvalidFuelType
+			return seriesvariant.UpdateSeriesVariant{}, ErrInvalidFuelType
 		}
 		fuelType = &ft
 	}
 
 	if ausm.EngineType != nil {
-		et, err := seriesmodel.ParseEngineType(*ausm.EngineType)
+		et, err := seriesvariant.ParseEngineType(*ausm.EngineType)
 		if err != nil {
-			return seriesmodel.UpdateSeriesModel{}, ErrInvalidEngineType
+			return seriesvariant.UpdateSeriesVariant{}, ErrInvalidEngineType
 		}
 		engineType = &et
 	}
 
 	if ausm.TransmissionType != nil {
-		tt, err := seriesmodel.ParseTransmissionType(*ausm.TransmissionType)
+		tt, err := seriesvariant.ParseTransmissionType(*ausm.TransmissionType)
 		if err != nil {
-			return seriesmodel.UpdateSeriesModel{}, ErrInvalidTransmissionType
+			return seriesvariant.UpdateSeriesVariant{}, ErrInvalidTransmissionType
 		}
 		transmissionType = &tt
 	}
 
-	return seriesmodel.UpdateSeriesModel{
+	return seriesvariant.UpdateSeriesVariant{
 		Name:               ausm.Name,
 		Version:            ausm.Version,
 		ModelYear:          ausm.ModelYear,

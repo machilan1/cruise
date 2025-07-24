@@ -1,8 +1,8 @@
-package seriesmodel
+package seriesvariant
 
 import "time"
 
-type SeriesModel struct {
+type SeriesVariant struct {
 	ID                 int
 	Name               string
 	Version            string
@@ -16,12 +16,12 @@ type SeriesModel struct {
 	HasTurbo           bool
 	TransmissionType   TransmissionType
 	HorsePower         int
-	Series             SeriesModelSeries
+	Series             SeriesVariantSeries
 	CreatedAt          time.Time
 	UpdatedAt          time.Time
 }
 
-type SeriesModelSeries struct {
+type SeriesVariantSeries struct {
 	ID             int
 	Name           string
 	BrandID        int
@@ -29,7 +29,7 @@ type SeriesModelSeries struct {
 	BrandLogoImage string
 }
 
-type NewSeriesModel struct {
+type NewSeriesVariant struct {
 	Name               string
 	Version            *string
 	ModelYear          int
@@ -45,7 +45,7 @@ type NewSeriesModel struct {
 	SeriesID           int
 }
 
-type UpdateSeriesModel struct {
+type UpdateSeriesVariant struct {
 	Name               *string
 	Version            *string
 	ModelYear          *int

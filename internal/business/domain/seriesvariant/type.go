@@ -1,4 +1,6 @@
-package seriesmodel
+package seriesvariant
+
+import "fmt"
 
 type DriveType string
 
@@ -23,7 +25,7 @@ func ParseDriveType(d string) (DriveType, error) {
 	case string(DriveTypeUnspecified):
 		return DriveTypeUnspecified, nil
 	default:
-		return "", ErrInvalidDriveType
+		return "", fmt.Errorf("invalid drive type: %s", d)
 	}
 }
 
@@ -50,7 +52,7 @@ func ParseFuelType(ft string) (FuelType, error) {
 	case string(FuelTypeUnspecified):
 		return FuelTypeUnspecified, nil
 	default:
-		return "", ErrInvalidFuelType
+		return "", fmt.Errorf("invalid fuel type: %s", ft)
 	}
 }
 
@@ -92,7 +94,7 @@ func ParseBodyStyle(bs string) (BodyStyle, error) {
 	case string(BodyStyleUnspecified):
 		return BodyStyleUnspecified, nil
 	default:
-		return "", ErrInvalidBodyStyle
+		return "", fmt.Errorf("invalid body style: %s", bs)
 	}
 }
 
@@ -113,7 +115,7 @@ func ParseTransmissionType(tm string) (TransmissionType, error) {
 	case string(TransmissionTypeUnspecified):
 		return TransmissionTypeUnspecified, nil
 	default:
-		return "", ErrInvalidTransmissionType
+		return "", fmt.Errorf("invalid transmission type: %s", tm)
 	}
 }
 
@@ -140,6 +142,6 @@ func ParseEngineType(et string) (EngineType, error) {
 	case string(EngineTypeUnspecified):
 		return EngineTypeUnspecified, nil
 	default:
-		return "", ErrInvalidEngineType
+		return "", fmt.Errorf("invalid engine type: %s", et)
 	}
 }

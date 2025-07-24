@@ -1,4 +1,4 @@
-package seriesmodelapi
+package seriesvariantapi
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"github.com/machilan1/cruise/internal/app/sdk/errs"
-	"github.com/machilan1/cruise/internal/business/domain/seriesmodel"
+	"github.com/machilan1/cruise/internal/business/domain/seriesvariant"
 	"github.com/machilan1/cruise/internal/business/sdk/tran"
 	"github.com/machilan1/cruise/internal/framework/logger"
 	"github.com/machilan1/cruise/internal/framework/web"
@@ -20,35 +20,35 @@ var (
 	ErrInvalidEngineType       = errs.NewTrustedError(fmt.Errorf("invalid engine type"), http.StatusBadRequest)
 	ErrInvalidTransmissionType = errs.NewTrustedError(fmt.Errorf("invalid transmission type"), http.StatusBadRequest)
 	ErrConflict                = errs.NewTrustedError(fmt.Errorf("input data conflicts with existing data"), http.StatusConflict)
-	ErrNotFound                = errs.NewTrustedError(fmt.Errorf("series model not found"), http.StatusNotFound)
-	ErrInvalidID               = errs.NewTrustedError(fmt.Errorf("invalid series model id"), http.StatusBadRequest)
+	ErrNotFound                = errs.NewTrustedError(fmt.Errorf("series variant not found"), http.StatusNotFound)
+	ErrInvalidID               = errs.NewTrustedError(fmt.Errorf("invalid series variant id"), http.StatusBadRequest)
 )
 
 type handlers struct {
-	log         *logger.Logger
-	txM         tran.TxManager
-	seriesModel *seriesmodel.Core
+	log           *logger.Logger
+	txM           tran.TxManager
+	seriesVariant *seriesvariant.Core
 }
 
-func newHandlers(log *logger.Logger, txM tran.TxManager, seriesModel *seriesmodel.Core) *handlers {
+func newHandlers(log *logger.Logger, txM tran.TxManager, seriesModel *seriesvariant.Core) *handlers {
 
 	return &handlers{
-		log:         log,
-		txM:         txM,
-		seriesModel: seriesModel,
+		log:           log,
+		txM:           txM,
+		seriesVariant: seriesModel,
 	}
 }
 
 func (h *handlers) newWithTx(txM tran.TxManager) (*handlers, error) {
-	fl, err := h.seriesModel.NewWithTx(txM)
+	fl, err := h.seriesVariant.NewWithTx(txM)
 	if err != nil {
 		return nil, err
 	}
 
 	return &handlers{
-		log:         h.log,
-		txM:         txM,
-		seriesModel: fl,
+		log:           h.log,
+		txM:           txM,
+		seriesVariant: fl,
 	}, nil
 }
 
@@ -60,7 +60,7 @@ func (h *handlers) query(ctx context.Context, w http.ResponseWriter, r *http.Req
 		return errs.NewTrustedError(err, http.StatusBadRequest)
 	}
 
-	sms, err := h.seriesModel.Query(ctx, filter)
+	sms, err := h.seriesVariant.Query(ctx, filter)
 	if err != nil {
 		return fmt.Errorf("query: %w", err)
 	}
@@ -69,7 +69,7 @@ func (h *handlers) query(ctx context.Context, w http.ResponseWriter, r *http.Req
 }
 
 func (h *handlers) queryByID(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	sm, err := getSeriesModel(ctx)
+	sm, err := getSeriesVariant(ctx)
 	if err != nil {
 		return err
 	}
@@ -85,17 +85,17 @@ func (h *handlers) create(ctx context.Context, w http.ResponseWriter, r *http.Re
 
 	nsm, err := toCoreNewSeriesModel(ansm)
 	if err != nil {
-		return err
+		return errs.NewTrustedError(err, http.StatusBadRequest)
 	}
 
-	var sm seriesmodel.SeriesModel
+	var sm seriesvariant.SeriesVariant
 	if err := h.txM.RunTx(ctx, func(txM tran.TxManager) error {
 		h, err := h.newWithTx(txM)
 		if err != nil {
 			return err
 		}
 
-		sm, err = h.seriesModel.Create(ctx, nsm)
+		sm, err = h.seriesVariant.Create(ctx, nsm)
 		if err != nil {
 			return fmt.Errorf("create: %w", err)
 		}
@@ -103,7 +103,7 @@ func (h *handlers) create(ctx context.Context, w http.ResponseWriter, r *http.Re
 		return nil
 
 	}); err != nil {
-		if errors.Is(err, seriesmodel.ErrConflict) {
+		if errors.Is(err, seriesvariant.ErrConflict) {
 			return ErrConflict
 		}
 		return err
@@ -113,7 +113,7 @@ func (h *handlers) create(ctx context.Context, w http.ResponseWriter, r *http.Re
 }
 
 func (h *handlers) update(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	sm, err := getSeriesModel(ctx)
+	sm, err := getSeriesVariant(ctx)
 	if err != nil {
 		return err
 	}
@@ -134,17 +134,17 @@ func (h *handlers) update(ctx context.Context, w http.ResponseWriter, r *http.Re
 			return err
 		}
 
-		sm, err = h.seriesModel.Update(ctx, usm, sm)
+		sm, err = h.seriesVariant.Update(ctx, usm, sm)
 		if err != nil {
 			return fmt.Errorf("update: %w", err)
 		}
 		return nil
 	}); err != nil {
-		if errors.Is(err, seriesmodel.ErrConflict) {
+		if errors.Is(err, seriesvariant.ErrConflict) {
 			return ErrConflict
 		}
 
-		if errors.Is(err, seriesmodel.ErrNotFound) {
+		if errors.Is(err, seriesvariant.ErrNotFound) {
 			return ErrNotFound
 		}
 
@@ -155,7 +155,7 @@ func (h *handlers) update(ctx context.Context, w http.ResponseWriter, r *http.Re
 }
 
 func (h *handlers) delete(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	sm, err := getSeriesModel(ctx)
+	sm, err := getSeriesVariant(ctx)
 	if err != nil {
 		return err
 	}
@@ -166,12 +166,12 @@ func (h *handlers) delete(ctx context.Context, w http.ResponseWriter, r *http.Re
 			return err
 		}
 
-		if err := h.seriesModel.Delete(ctx, sm.ID); err != nil {
+		if err := h.seriesVariant.Delete(ctx, sm.ID); err != nil {
 			return fmt.Errorf("delete: %w", err)
 		}
 		return nil
 	}); err != nil {
-		if errors.Is(err, seriesmodel.ErrNotFound) {
+		if errors.Is(err, seriesvariant.ErrNotFound) {
 			return ErrNotFound
 		}
 

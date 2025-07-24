@@ -1,5 +1,5 @@
 
-DROP TABLE IF EXISTS series_models CASCADE;
+DROP TABLE IF EXISTS series_variants CASCADE;
 DROP TYPE IF EXISTS engine_types CASCADE;
 DROP TYPE IF EXISTS transmission_types CASCADE;
 DROP TYPE IF EXISTS body_styles CASCADE;

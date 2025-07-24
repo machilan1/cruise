@@ -1,11 +1,11 @@
 @baseUrl = http://localhost:3000/v1
-@pattern = series-models
+@pattern = series-variants
 
 ### AUTH: Get
 GET {{baseUrl}}/{{pattern}}
 
 ### AUTH: Get by id
-GET {{baseUrl}}/{{pattern}}/7
+GET {{baseUrl}}/{{pattern}}/1
 
 ### ADMIN: Create
 POST {{baseUrl}}/{{pattern}}
@@ -28,7 +28,7 @@ POST {{baseUrl}}/{{pattern}}
 
 ### ADMIN: Update
 
-PUT {{baseUrl}}/{{pattern}}/7
+PUT {{baseUrl}}/{{pattern}}/1
 
 {
   "name":"320d",
