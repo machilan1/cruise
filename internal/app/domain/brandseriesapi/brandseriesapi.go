@@ -77,14 +77,14 @@ func (h *handlers) create(ctx context.Context, w http.ResponseWriter, r *http.Re
 		return errs.NewTrustedError(err, http.StatusBadRequest)
 	}
 
+	nbs, err := toCoreNewBrandSeries(anbs)
+	if err != nil {
+		return errs.NewTrustedError(err, http.StatusBadRequest)
+	}
+
 	var bs brandseries.BrandSeries
 	if err := h.txM.RunTx(ctx, func(txM tran.TxManager) error {
 		h, err := h.newWithTx(txM)
-		if err != nil {
-			return err
-		}
-
-		nbs, err := toCoreNewBrandSeries(anbs)
 		if err != nil {
 			return err
 		}
@@ -116,13 +116,13 @@ func (h *handlers) update(ctx context.Context, w http.ResponseWriter, r *http.Re
 		return errs.NewTrustedError(err, http.StatusBadRequest)
 	}
 
+	ubs, err := toCoreUpdateBrandSeries(aubs)
+	if err != nil {
+		return errs.NewTrustedError(err, http.StatusBadRequest)
+	}
+
 	if err := h.txM.RunTx(ctx, func(txM tran.TxManager) error {
 		h, err := h.newWithTx(txM)
-		if err != nil {
-			return err
-		}
-
-		ubs, err := toCoreUpdateBrandSeries(aubs)
 		if err != nil {
 			return err
 		}

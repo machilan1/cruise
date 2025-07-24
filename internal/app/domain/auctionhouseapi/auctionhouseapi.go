@@ -76,14 +76,14 @@ func (h *handlers) create(ctx context.Context, w http.ResponseWriter, r *http.Re
 		return errs.NewTrustedError(err, http.StatusBadRequest)
 	}
 
+	na, err := toCoreNewAuctionHouse(nah)
+	if err != nil {
+		return errs.NewTrustedError(err, http.StatusBadRequest)
+	}
+
 	var ah auctionhouse.AuctionHouse
 	if err := h.txM.RunTx(ctx, func(txM tran.TxManager) error {
 		h, err := h.newWithTx(txM)
-		if err != nil {
-			return err
-		}
-
-		na, err := toCoreNewAuctionHouse(nah)
 		if err != nil {
 			return err
 		}
@@ -115,13 +115,13 @@ func (h *handlers) update(ctx context.Context, w http.ResponseWriter, r *http.Re
 		return errs.NewTrustedError(err, http.StatusBadRequest)
 	}
 
+	cuah, err := toCoreUpdateAuctionHouse(uah)
+	if err != nil {
+		return errs.NewTrustedError(err, http.StatusBadRequest)
+	}
+
 	if err := h.txM.RunTx(ctx, func(txM tran.TxManager) error {
 		h, err := h.newWithTx(txM)
-		if err != nil {
-			return err
-		}
-
-		cuah, err := toCoreUpdateAuctionHouse(uah)
 		if err != nil {
 			return err
 		}
@@ -160,7 +160,7 @@ func (h *handlers) Archive(ctx context.Context, w http.ResponseWriter, r *http.R
 		}
 
 		if err := h.auctionHouse.Archive(ctx, ah.ID); err != nil {
-			return err
+			return fmt.Errorf("archive: %w", err)
 		}
 
 		return nil
