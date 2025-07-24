@@ -5,7 +5,7 @@ import "time"
 type Brand struct {
 	ID        int
 	Name      string
-	LogoImage *string
+	LogoImage string
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
@@ -16,5 +16,6 @@ type NewBrand struct {
 }
 
 type UpdateBrand struct {
-	LogoImage string
+	Name      *string
+	LogoImage *string
 }

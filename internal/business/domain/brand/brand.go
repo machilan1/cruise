@@ -64,9 +64,15 @@ func (c *Core) QueryByID(ctx context.Context, id int) (Brand, error) {
 
 func (c *Core) Create(ctx context.Context, nb NewBrand) (Brand, error) {
 	now := time.Now()
+	logoImage := ""
+
+	if nb.LogoImage != nil {
+		logoImage = *nb.LogoImage
+	}
+
 	d := Brand{
 		Name:      nb.Name,
-		LogoImage: nb.LogoImage,
+		LogoImage: logoImage,
 		CreatedAt: now,
 		UpdatedAt: now,
 	}
@@ -82,8 +88,13 @@ func (c *Core) Create(ctx context.Context, nb NewBrand) (Brand, error) {
 func (c *Core) Update(ctx context.Context, d Brand, ub UpdateBrand) (Brand, error) {
 	now := time.Now()
 
+	logoImage := ""
+	if ub.LogoImage != nil {
+		logoImage = *ub.LogoImage
+	}
+
 	d.UpdatedAt = now
-	d.LogoImage = &ub.LogoImage
+	d.LogoImage = logoImage
 
 	d, err := c.storer.Update(ctx, d)
 	if err != nil {

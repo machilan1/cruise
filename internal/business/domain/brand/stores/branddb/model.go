@@ -9,7 +9,7 @@ import (
 type dbBrand struct {
 	ID        int       `db:"brand_id"`
 	Name      string    `db:"brand_name"`
-	LogoImage *string   `db:"logo_image"`
+	LogoImage string   `db:"logo_image"`
 	CreatedAt time.Time `db:"created_at"`
 	UpdatedAt time.Time `db:"updated_at"`
 }

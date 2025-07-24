@@ -84,7 +84,12 @@ func (h *handlers) create(ctx context.Context, w http.ResponseWriter, r *http.Re
 			return err
 		}
 
-		brd, err = h.brand.Create(ctx, toCoreNewBrand(anbrd))
+		cnb, err := toCoreNewBrand(anbrd)
+		if err != nil {
+			return errs.NewTrustedError(err, http.StatusBadRequest)
+		}
+
+		brd, err = h.brand.Create(ctx, cnb)
 		if err != nil {
 			return fmt.Errorf("create: anbrd[%+v]: %w", anbrd, err)
 		}
@@ -128,7 +133,12 @@ func (h *handlers) update(ctx context.Context, w http.ResponseWriter, r *http.Re
 			return err
 		}
 
-		brd, err = h.brand.Update(ctx, brd, toCoreUpdateBrand(aubrd))
+		cub, err := toCoreUpdateBrand(aubrd)
+		if err != nil {
+			return errs.NewTrustedError(err, http.StatusBadRequest)
+		}
+
+		brd, err = h.brand.Update(ctx, brd, cub)
 		if err != nil {
 			return fmt.Errorf("update: %w", err)
 		}
