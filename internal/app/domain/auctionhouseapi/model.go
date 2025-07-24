@@ -8,7 +8,7 @@ import (
 
 type AppAuctionHouse struct {
 	ID        int                     `json:"id"`
-	Name      string                  `json:"Namename"`
+	Name      string                  `json:"name"`
 	Location  AppAuctionHouseLocation `json:"location"`
 	CreatedAt time.Time               `json:"createdAt"`
 	UpdatedAt time.Time               `json:"updatedAt"`
